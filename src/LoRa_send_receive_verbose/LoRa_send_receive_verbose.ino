@@ -2,15 +2,15 @@
 #include <LoRa.h>
 #include <ArduinoUniqueID.h>
 #include <stdint.h>
-#define aid_bsize 8	//byte size of arduino_id
-#define res_bsize 3	//byte size of reserved
 #define inter_s 100 //ms
-#define ttl 7		//hops
+#define ttl_s 7		//hops
 
 long lastSendTime = 0;
 int interval = inter_s;
 int8_t t = 20, humidity = 70;
-uint16_t c02 = 10000, tvoc = 500, upId = 0;
+uint16_t CO2 = 10000, tvoc = 500, upId = 0;
+byte *send_buf[12];
+short send_buf_len = 0;
 
 void setup()
 {
@@ -31,68 +31,93 @@ void setup()
 		while (1)
 			;
 	}
-	//LoRa.setSpreadingFactor(7);
+
 	LoRa.enableCrc();
 	//Set random sending window
-	lastSendTime = random(inter_s*2);
+	lastSendTime = random(inter_s * 2);
 }
 
 void loop()
 {
-	
 
 	// send packet
-	if (millis() - lastSendTime > interval)//Check if the sending window is open
+	if (millis() - lastSendTime > interval) //Sending window open?
 	{
-		byte *x;
+		Serial.print("got in");
+		byte *new_packet;
 
 		//Gather sensor data
+		new_packet = dataToPacket(t, humidity, CO2, tvoc, upId);
 
-		LoRa.beginPacket(true);
-		x = dataToByte(t, humidity, c02, tvoc, upId);
-		LoRa.write(UniqueID8, 8);
-		LoRa.write(x, 8);//Write data
+		send_buf[send_buf_len] = new_packet;
+		send_buf_len++;
 
-		LoRa.write(x, 4);//Write TTL & Reserved
+		LoRa.beginPacket(); //Variable size packet
+
+		for (int i = 0; i < send_buf_len; i++)
+			LoRa.write(send_buf[i], 20);
+
 		LoRa.endPacket();
 
 		lastSendTime = millis();
 		//Set new random sending window
-		interval = random(inter_s*2);
+		interval = random(inter_s * 2);
 
-		//Print all to serial
-		Serial.println("----Sent----");
-		printByteArr(x, 8);
-
-		if(upId == 65535)
+		if (upId == 65535)
 			upId = 0;
 		else
 			upId++;
 
-		//free alloc
-		free(x);
+		Serial.println("----------Sent-----------");
+		printByteArr(send_buf, send_buf_len, 20);
+
+		freePByteArr(send_buf, send_buf_len);
+		send_buf_len = 0;
 	}
 
+	delay(50);
 	// receive packet
-	if (LoRa.parsePacket(20))
+	if (LoRa.parsePacket() && send_buf_len < 19)
 	{
-		byte *r_data, *id_temp, *temp;
-		int8_t r_t, r_humidity;
-		uint16_t r_c02, r_tvoc, r_upId;
-		uint64_t r_arduinoId;
-		//Serial.print("Received packet '");
-		r_data = (byte *)malloc(16);
-		id_temp = (byte *)malloc(8);
-		temp = (byte *)malloc(2);
+		byte *r_data;
+		/*int8_t r_t, r_humidity;
+		uint16_t r_CO2, r_tvoc, r_upId;
+		uint64_t r_arduinoId;*/
+		short packet_size = LoRa.available();
+		short i;
+		r_data = (byte *)malloc(packet_size);
+		/*id_temp = (byte *)malloc(8);
+		temp = (byte *)malloc(2);*/
+
 		//Reads data
-		for (int i = 0; i < 16; i++)
+		i = 0;
+		while (LoRa.available())
 		{
 			r_data[i] = LoRa.read();
+			i++;
+		}
+		Serial.println("-------------Received-------------");
+		printByteArr(r_data, packet_size, 20);
+
+		//Add to buffer
+		i = 0;
+		while (send_buf_len < 11 && i < packet_size)
+		{
+			Serial.println("adding: ");
+			if (getTtl(&r_data[i]) > 0) //TTL > 0 ?
+			{
+				Serial.print("ttl >0, ");
+				decrTtl(&r_data[i]);
+				Serial.print("ttl--, ");
+				send_buf[send_buf_len] = (byte *)malloc(20);
+				memcpy(send_buf[send_buf_len], &r_data[i], 20);
+				Serial.println("added to buffer");
+				send_buf_len++;
+			}
+			i += 20;
 		}
 
-		Serial.println("----Received----");
-		//printByteArr(r_data, 16);
-
+		/*
 		//Save arduino Id
 		for (int i = 0; i < 8; i++)
 		{
@@ -105,12 +130,12 @@ void loop()
 		r_t = r_data[8];
 		r_humidity = r_data[9];
 
-		//Save c02 levels
+		//Save CO2 levels
 		for (int i = 0; i < 2; i++)
 		{
 			temp[i] = r_data[11 - i]; //10 + 1 - i (little Endian)
 		}
-		memcpy(&r_c02, temp, 2);
+		memcpy(&r_CO2, temp, 2);
 
 		//Save tvoc levels
 		for (int i = 0; i < 2; i++)
@@ -129,7 +154,6 @@ void loop()
 
 		//free malloc
 		free(temp);
-		free(r_data);
 		//Print all to serial
 		Serial.print("Arduino Id: ");
 		Serial.print(r_arduinoId);
@@ -137,21 +161,57 @@ void loop()
 		Serial.print(r_t);
 		Serial.print(";Hum: ");
 		Serial.print(r_humidity);
-		Serial.print("%;C02: ");
-		Serial.print(r_c02);
+		Serial.print("%;CO2: ");
+		Serial.print(r_CO2);
 		Serial.print("ppm;Tvoc: ");
 		Serial.print(r_tvoc);
 		Serial.print("ppm;upId: ");
 		Serial.print(r_upId);
 		Serial.println();
-		/*print RSSI of packet
+		//print RSSI of packet
 		Serial.print(" | RSSI: ");
 		Serial.print(LoRa.packetRssi());
 		Serial.print(", SNR: ");
 		Serial.println(LoRa.packetSnr());
 		blinking(50, 3);*/
-		
+		Serial.println("Exited");
+		free(r_data);
+		Serial.println("Cleaned mem");
 	}
+}
+
+void freePByteArr(byte **arr, int d1)
+{
+	for (int i = 0; i < d1; i++)
+	{
+		free(arr[i]);
+	}
+}
+
+void printByteArr(byte **arr, int d1, int d2)
+{
+	for (int i = 0; i < d1; i++)
+	{
+		for (int k = 0; k < d2; k++)
+		{
+			Serial.print(arr[i][k], HEX);
+			Serial.print(" ");
+		}
+		Serial.println();
+	}
+	Serial.println();
+}
+
+void printByteArr(byte *arr, int len, int nl)
+{
+	for (int i = 0; i < len; i++)
+	{
+		if (i % nl == 0)
+			Serial.println();
+		Serial.print(arr[i], HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
 }
 
 void printByteArr(byte *arr, int len)
@@ -175,13 +235,45 @@ void blinking(int delta, int n)
 	}
 }
 
-byte *dataToByte(byte t, byte humidity, uint16_t c02, uint16_t tvoc, uint16_t upId)
+byte getTtl(byte *arr)
+{
+	byte ttl;
+	memcpy(&ttl, arr + 16, 1);
+	return ttl;
+}
+
+byte *decrTtl(byte *arr)
+{
+	byte ttl;
+	ttl = getTtl(arr) - 1;
+	memcpy(arr + 16, &ttl, 1);
+	return arr;
+}
+
+byte *dataToPacket(byte t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t upId)
+{
+	byte *packet;
+	byte *data;
+	byte ttl = ttl_s;
+	byte res[] = {0x00, 0x00, 0x00};
+
+	data = dataToByte(t, humidity, CO2, tvoc, upId);
+	packet = (byte *)malloc(20);
+	memcpy(packet, UniqueID8, 8);
+	memcpy(packet + 8, data, 8);
+	memcpy(packet + 16, &ttl, 1);
+	memcpy(packet + 17, res, 3);
+	free(data);
+	return packet;
+}
+
+byte *dataToByte(byte t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t upId)
 {
 	byte *data, *x;
 	data = (byte *)malloc(8);
 	data[0] = t;
 	data[1] = humidity;
-	x = int16ToByte(c02);
+	x = int16ToByte(CO2);
 	memcpy(data + 2, x, 2);
 	free(x);
 	x = int16ToByte(tvoc);
