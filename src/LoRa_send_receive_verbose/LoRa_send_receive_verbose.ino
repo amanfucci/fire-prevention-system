@@ -43,7 +43,6 @@ void loop()
 	// send packet
 	if (millis() - lastSendTime > interval) //Sending window open?
 	{
-		Serial.print("got in");
 		byte *new_packet;
 
 		//Gather sensor data
@@ -96,23 +95,54 @@ void loop()
 			r_data[i] = LoRa.read();
 			i++;
 		}
-		Serial.println("-------------Received-------------");
+
+		Serial.println("----------Received-------");
 		printByteArr(r_data, packet_size, 20);
 
 		//Add to buffer
 		i = 0;
 		while (send_buf_len < 11 && i < packet_size)
 		{
-			Serial.println("adding: ");
-			if (getTtl(&r_data[i]) > 0) //TTL > 0 ?
+			if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8)) //TTL > 0 ?
 			{
-				Serial.print("ttl >0, ");
-				decrTtl(&r_data[i]);
-				Serial.print("ttl--, ");
-				send_buf[send_buf_len] = (byte *)malloc(20);
-				memcpy(send_buf[send_buf_len], &r_data[i], 20);
-				Serial.println("added to buffer");
-				send_buf_len++;
+				int k;
+				bool isNewID = true;	 //New id?
+				bool isNewUpdate = true; //New update?
+
+				for (k = 0; k < send_buf_len; k++)
+				{
+					if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+					{
+						isNewID = false;
+
+						if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
+						{
+							isNewUpdate = false;
+						}
+						else
+						{
+							free(send_buf[k]);
+						}
+						break; //Only one packet for each id
+					}
+				}
+
+				if (isNewID)
+				{
+					decrTtl(&r_data[i]);
+					send_buf[send_buf_len] = (byte *)malloc(20);
+					memcpy(send_buf[send_buf_len], &r_data[i], 20);
+					send_buf_len++;
+				}
+				else
+				{
+					if (isNewUpdate)
+					{
+						decrTtl(&r_data[i]);
+						send_buf[k] = (byte *)malloc(20);
+						memcpy(send_buf[k], &r_data[i], 20);
+					}
+				}
 			}
 			i += 20;
 		}
@@ -174,9 +204,7 @@ void loop()
 		Serial.print(", SNR: ");
 		Serial.println(LoRa.packetSnr());
 		blinking(50, 3);*/
-		Serial.println("Exited");
 		free(r_data);
-		Serial.println("Cleaned mem");
 	}
 }
 
@@ -190,24 +218,21 @@ void freePByteArr(byte **arr, int d1)
 
 void printByteArr(byte **arr, int d1, int d2)
 {
+
 	for (int i = 0; i < d1; i++)
 	{
-		for (int k = 0; k < d2; k++)
-		{
-			Serial.print(arr[i][k], HEX);
-			Serial.print(" ");
-		}
-		Serial.println();
+		printByteArr(arr[i], d2);
 	}
-	Serial.println();
 }
 
 void printByteArr(byte *arr, int len, int nl)
 {
 	for (int i = 0; i < len; i++)
 	{
-		if (i % nl == 0)
+		if ((i != 0) && (i % nl == 0))
 			Serial.println();
+		if (arr[i] < 0x10)
+			Serial.print("0");
 		Serial.print(arr[i], HEX);
 		Serial.print(" ");
 	}
@@ -218,6 +243,8 @@ void printByteArr(byte *arr, int len)
 {
 	for (int i = 0; i < len; i++)
 	{
+		if (arr[i] < 0x10)
+			Serial.print("0");
 		Serial.print(arr[i], HEX);
 		Serial.print(" ");
 	}
