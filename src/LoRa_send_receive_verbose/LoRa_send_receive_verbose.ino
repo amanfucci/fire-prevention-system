@@ -11,7 +11,7 @@ long lastSendTime = 0;
 int interval = inter_s;
 int8_t t = 20, humidity = 70;
 uint16_t c02 = 10000, tvoc = 500, upId = 0;
-
+f
 void setup()
 {
 	randomSeed(analogRead(0));
