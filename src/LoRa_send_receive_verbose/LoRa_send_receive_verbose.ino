@@ -2,7 +2,7 @@
 #include <LoRa.h>
 #include <ArduinoUniqueID.h>
 #include <stdint.h>
-#define inter_s 100 //ms
+#define inter_s 10000 //ms
 #define ttl_s 7		//hops
 
 long lastSendTime = 0;
@@ -60,7 +60,7 @@ void loop()
 
 		lastSendTime = millis();
 		//Set new random sending window
-		interval = random(inter_s * 2);
+		interval = random(inter_s + inter_s/2);
 
 		if (upId == 65535)
 			upId = 0;

@@ -3,14 +3,22 @@
 #include <ArduinoUniqueID.h>
 #include <stdint.h>
 #include <CCS811.h>
-#define inter_s 100 //ms
-#define ttl_s 7		//hops
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
+#define DHTPIN 0
+#define DHTTYPE DHT22
+
+#define inter_s 10000 //ms
+#define ttl_s 7		  //hops
 
 CCS811 air_sensor;
+DHT_Unified dht(DHTPIN, DHTTYPE);
+
+uint16_t upId = 0;
 long lastSendTime = 0;
 int interval = inter_s;
-int8_t t = 20, humidity = 70;
-uint16_t CO2 = 10000, tvoc = 500, upId = 0;
 byte *send_buf[12];
 short send_buf_len = 0;
 
@@ -19,33 +27,40 @@ void setup()
 	randomSeed(analogRead(0));
 	pinMode(LED_BUILTIN, OUTPUT);
 	blinking(100, 3);
-
+	
 	//Begin loRa
-	if (!LoRa.begin(868E6))
+	while (!LoRa.begin(868E6))
 	{
-		//blinking(400,2);
-		while (1);
+		blinking(500, 1);
+		delay(5000);
 	}
 	LoRa.enableCrc();
+
 	//Set random sending window
 	lastSendTime = random(inter_s * 2);
 
 	//CCS811
-	air_sensor.begin();
-	air_sensor.setMeasCycle(air_sensor.eCycle_10s);
+	while (air_sensor.begin() != 0)
+	{
+		blinking(500, 2);
+		delay(5000);
+	}
+	//DHT
+	dht.begin();
 
+	air_sensor.setMeasCycle(air_sensor.eCycle_10s);
 }
 
 void loop()
 {
-
+	bool ready = air_sensor.checkDataReady() && DHTReady(dht);
 	// send packet
-	if ((millis() - lastSendTime > interval) && air_sensor.checkDataReady()) //Sending window open?
-	{
+	if ((millis() - lastSendTime > interval) && ready) //Sending window open?
+	{												   //Data from sensors?
 		byte *new_packet;
 
 		//Gather sensor data
-		new_packet = dataToPacket(t, humidity, air_sensor.getCO2PPM(), air_sensor.getTVOCPPB(), upId);
+		new_packet = dataToPacket(getTemp(dht), getHum(dht), air_sensor.getCO2PPM(), air_sensor.getTVOCPPB(), upId);
 
 		send_buf[send_buf_len] = new_packet;
 		send_buf_len++;
@@ -59,7 +74,7 @@ void loop()
 
 		lastSendTime = millis();
 		//Set new random sending window
-		interval = random(inter_s * 2);
+		interval = random(inter_s + inter_s / 2);
 
 		if (upId == 65535)
 			upId = 0;
@@ -228,11 +243,11 @@ byte *dataToPacket(byte t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t 
 	return packet;
 }
 
-byte *dataToByte(byte t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t upId)
+byte *dataToByte(int8_t t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t upId)
 {
 	byte *data, *x;
 	data = (byte *)malloc(8);
-	data[0] = t;
+	memcpy(data, &t, 1);
 	data[1] = humidity;
 	x = int16ToByte(CO2);
 	memcpy(data + 2, x, 2);
@@ -282,4 +297,35 @@ byte *concatArr(byte *x, byte *y, int len)
 	}
 
 	return z;
+}
+
+bool DHTReady(DHT_Unified d)
+{
+	sensors_event_t e1, e2;
+	d.temperature().getEvent(&e1);
+	d.humidity().getEvent(&e2);
+
+	return !isnan(e1.temperature) && !isnan(e2.relative_humidity);
+}
+
+int8_t getTemp(DHT_Unified d)
+{
+	sensors_event_t e1;
+	int8_t temp;
+	int t;
+	d.temperature().getEvent(&e1);
+	t = (int)e1.temperature;
+	memcpy(&temp, &t, 8);
+	return temp;
+}
+
+uint8_t getHum(DHT_Unified d)
+{
+	sensors_event_t e1;
+	uint8_t temp;
+	int h;
+	d.humidity().getEvent(&e1);
+	h = (int)e1.relative_humidity;
+	memcpy(&temp, &h, 8);
+	return temp;
 }
