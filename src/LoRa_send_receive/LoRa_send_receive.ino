@@ -1,7 +1,8 @@
+#include <stdint.h>
 #include <SPI.h>
 #include <LoRa.h>
 #include <ArduinoUniqueID.h>
-#include <stdint.h>
+#include <ArduinoLowPower.h>
 #include <CCS811.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -18,7 +19,7 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 
 uint16_t upId = 0;
 long lastSendTime = 0;
-int interval = inter_s;
+long interval = inter_s;
 byte *send_buf[12];
 short send_buf_len = 0;
 
@@ -27,7 +28,7 @@ void setup()
 	randomSeed(analogRead(0));
 	pinMode(LED_BUILTIN, OUTPUT);
 	blinking(100, 3);
-	
+
 	//Begin loRa
 	while (!LoRa.begin(868E6))
 	{
@@ -51,109 +52,141 @@ void setup()
 	air_sensor.setMeasCycle(air_sensor.eCycle_10s);
 }
 
+
 void loop()
 {
-	bool ready = air_sensor.checkDataReady() && DHTReady(dht);
+	/*
+	if(!air_sensor.checkDataReady()){
+		if(DHTReady(dht)){
+			blinking(50,1);
+		}else{
+			blinking(200,1);
+		}		
+	}
+	else{
+		if(DHTReady(dht)){
+			blinking(500,1);
+		}else{
+			blinking(1000,1);
+		}			
+	}*/
+
 	// send packet
-	if ((millis() - lastSendTime > interval) && ready) //Sending window open?
-	{												   //Data from sensors?
-		byte *new_packet;
+	if ((millis() - lastSendTime) > interval) //Sending window open?
+	{
+		if (air_sensor.checkDataReady() && DHTReady(dht)) //Data from sensors?
+		{
+			byte *new_packet;
 
-		//Gather sensor data
-		new_packet = dataToPacket(getTemp(dht), getHum(dht), air_sensor.getCO2PPM(), air_sensor.getTVOCPPB(), upId);
+			//Gather sensor data
+			new_packet = dataToPacket(getTemp(dht), getHum(dht), air_sensor.getCO2PPM(), air_sensor.getTVOCPPB(), upId);
 
-		send_buf[send_buf_len] = new_packet;
-		send_buf_len++;
+			send_buf[send_buf_len] = new_packet;
+			send_buf_len++;
 
-		LoRa.beginPacket(); //Variable size packet
+			LoRa.beginPacket(); //Variable size packet
 
-		for (int i = 0; i < send_buf_len; i++)
-			LoRa.write(send_buf[i], 20);
+			for (int i = 0; i < send_buf_len; i++)
+				LoRa.write(send_buf[i], 20);
 
-		LoRa.endPacket();
+			LoRa.endPacket();
 
-		lastSendTime = millis();
-		//Set new random sending window
-		interval = random(inter_s + inter_s / 2);
+			lastSendTime = millis();
+			//Set new random sending window
+			interval = random(inter_s, inter_s + (inter_s / 2));
 
-		if (upId == 65535)
-			upId = 0;
+			if (upId == 65535)
+				upId = 0;
+			else
+				upId++;
+
+			freePByteArr(send_buf, send_buf_len);
+			send_buf_len = 0;
+			air_sensor.writeBaseLine(0x847B);
+			blinking(50, 2);
+
+			LoRa.idle();
+		}
 		else
-			upId++;
-
-		freePByteArr(send_buf, send_buf_len);
-		send_buf_len = 0;
-		air_sensor.writeBaseLine(0x847B);
+		{
+			lastSendTime = millis() - (interval - 3000);
+		}
 	}
 
 	delay(50);
-	// receive packet
-	if (LoRa.parsePacket() && send_buf_len < 19)
+
+	if (send_buf_len < 11)
 	{
-		byte *r_data;
-		short packet_size = LoRa.available();
-		short i;
-		r_data = (byte *)malloc(packet_size);
-
-		//Reads data
-		i = 0;
-		while (LoRa.available())
+		// receive packet
+		if (LoRa.parsePacket())
 		{
-			r_data[i] = LoRa.read();
-			i++;
-		}
+			byte *r_data;
+			short packet_size = LoRa.available();
+			short i;
+			r_data = (byte *)malloc(packet_size);
 
-		//blinking(i*2,3);
-
-		//Add to buffer
-		i = 0;
-		while (send_buf_len < 11 && i < packet_size)
-		{
-			if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8)) //TTL > 0 ?
+			//Reads data
+			i = 0;
+			while (LoRa.available())
 			{
-				int k;
-				bool isNewID = true;	 //New id?
-				bool isNewUpdate = true; //New update?
+				r_data[i] = LoRa.read();
+				i++;
+			}
 
-				for (k = 0; k < send_buf_len; k++)
+			//Add to buffer
+			i = 0;
+			while (send_buf_len < 11 && i < packet_size)
+			{ //TTL > 0? My packet? My protocol?
+				if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8) && r_data[i + 17] == 0x12)
 				{
-					if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+					int k;
+					bool isNewID = true;	 //New id?
+					bool isNewUpdate = true; //New update?
+
+					for (k = 0; k < send_buf_len; k++)
 					{
-						isNewID = false;
+						if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+						{
+							isNewID = false;
 
-						if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
-						{
-							isNewUpdate = false;
+							if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
+							{
+								isNewUpdate = false;
+							}
+							else
+							{
+								free(send_buf[k]);
+							}
+							break; //Only one packet for each id
 						}
-						else
-						{
-							free(send_buf[k]);
-						}
-						break; //Only one packet for each id
 					}
-				}
 
-				if (isNewID)
-				{
-					decrTtl(&r_data[i]);
-					send_buf[send_buf_len] = (byte *)malloc(20);
-					memcpy(send_buf[send_buf_len], &r_data[i], 20);
-					send_buf_len++;
-				}
-				else
-				{
-					if (isNewUpdate)
+					if (isNewID)
 					{
 						decrTtl(&r_data[i]);
-						send_buf[k] = (byte *)malloc(20);
-						memcpy(send_buf[k], &r_data[i], 20);
+						send_buf[send_buf_len] = (byte *)malloc(20);
+						memcpy(send_buf[send_buf_len], &r_data[i], 20);
+						send_buf_len++;
+					}
+					else
+					{
+						if (isNewUpdate)
+						{
+							decrTtl(&r_data[i]);
+							send_buf[k] = (byte *)malloc(20);
+							memcpy(send_buf[k], &r_data[i], 20);
+						}
 					}
 				}
+				i += 20;
 			}
-			i += 20;
+			free(r_data);
 		}
-
-		free(r_data);
+	}
+	else
+	{
+		LoRa.sleep();
+		LowPower.sleep(interval - (millis() - lastSendTime));
 	}
 }
 
@@ -231,14 +264,16 @@ byte *dataToPacket(byte t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t 
 	byte *packet;
 	byte *data;
 	byte ttl = ttl_s;
-	byte res[] = {0x00, 0x00, 0x00};
+	byte protocol[] = {0x12};
+	byte res[] = {0x00, 0x00};
 
 	data = dataToByte(t, humidity, CO2, tvoc, upId);
 	packet = (byte *)malloc(20);
 	memcpy(packet, UniqueID8, 8);
 	memcpy(packet + 8, data, 8);
 	memcpy(packet + 16, &ttl, 1);
-	memcpy(packet + 17, res, 3);
+	memcpy(packet + 17, protocol, 1);
+	memcpy(packet + 18, res, 2);
 	free(data);
 	return packet;
 }
@@ -304,7 +339,6 @@ bool DHTReady(DHT_Unified d)
 	sensors_event_t e1, e2;
 	d.temperature().getEvent(&e1);
 	d.humidity().getEvent(&e2);
-
 	return !isnan(e1.temperature) && !isnan(e2.relative_humidity);
 }
 

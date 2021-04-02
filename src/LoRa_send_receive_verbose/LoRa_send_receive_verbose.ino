@@ -1,9 +1,10 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <ArduinoUniqueID.h>
+#include <ArduinoLowPower.h>
 #include <stdint.h>
 #define inter_s 10000 //ms
-#define ttl_s 7		//hops
+#define ttl_s 7		  //hops
 
 long lastSendTime = 0;
 int interval = inter_s;
@@ -60,7 +61,7 @@ void loop()
 
 		lastSendTime = millis();
 		//Set new random sending window
-		interval = random(inter_s + inter_s/2);
+		interval = random(inter_s, inter_s + (inter_s / 2));
 
 		if (upId == 65535)
 			upId = 0;
@@ -72,139 +73,150 @@ void loop()
 
 		freePByteArr(send_buf, send_buf_len);
 		send_buf_len = 0;
+
+		LoRa.idle();
 	}
 
 	delay(50);
-	// receive packet
-	if (LoRa.parsePacket() && send_buf_len < 19)
+
+	if (send_buf_len < 11)
 	{
-		byte *r_data;
-		/*int8_t r_t, r_humidity;
-		uint16_t r_CO2, r_tvoc, r_upId;
-		uint64_t r_arduinoId;*/
-		short packet_size = LoRa.available();
-		short i;
-		r_data = (byte *)malloc(packet_size);
-		/*id_temp = (byte *)malloc(8);
-		temp = (byte *)malloc(2);*/
-
-		//Reads data
-		i = 0;
-		while (LoRa.available())
+		// receive packet
+		if (LoRa.parsePacket())
 		{
-			r_data[i] = LoRa.read();
-			i++;
-		}
+			byte *r_data;
+			/*int8_t r_t, r_humidity;
+			uint16_t r_CO2, r_tvoc, r_upId;
+			uint64_t r_arduinoId;*/
+			short packet_size = LoRa.available();
+			short i;
+			r_data = (byte *)malloc(packet_size);
+			/*id_temp = (byte *)malloc(8);
+			temp = (byte *)malloc(2);*/
 
-		Serial.println("----------Received-------");
-		printByteArr(r_data, packet_size, 20);
-
-		//Add to buffer
-		i = 0;
-		while (send_buf_len < 11 && i < packet_size)
-		{
-			if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8)) //TTL > 0 ?
+			//Reads data
+			i = 0;
+			while (LoRa.available())
 			{
-				int k;
-				bool isNewID = true;	 //New id?
-				bool isNewUpdate = true; //New update?
+				r_data[i] = LoRa.read();
+				i++;
+			}
 
-				for (k = 0; k < send_buf_len; k++)
+			Serial.println("----------Received-------");
+			printByteArr(r_data, packet_size, 20);
+
+			//Add to buffer
+			i = 0;
+			while (send_buf_len < 11 && i < packet_size)
+			{ //TTL > 0? My packet? My protocol?
+				if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8) && r_data[i + 17] == 0x12)
 				{
-					if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+					int k;
+					bool isNewID = true;	 //New id?
+					bool isNewUpdate = true; //New update?
+
+					for (k = 0; k < send_buf_len; k++)
 					{
-						isNewID = false;
+						if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+						{
+							isNewID = false;
 
-						if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
-						{
-							isNewUpdate = false;
+							if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
+							{
+								isNewUpdate = false;
+							}
+							else
+							{
+								free(send_buf[k]);
+							}
+							break; //Only one packet for each id
 						}
-						else
-						{
-							free(send_buf[k]);
-						}
-						break; //Only one packet for each id
 					}
-				}
 
-				if (isNewID)
-				{
-					decrTtl(&r_data[i]);
-					send_buf[send_buf_len] = (byte *)malloc(20);
-					memcpy(send_buf[send_buf_len], &r_data[i], 20);
-					send_buf_len++;
-				}
-				else
-				{
-					if (isNewUpdate)
+					if (isNewID)
 					{
 						decrTtl(&r_data[i]);
-						send_buf[k] = (byte *)malloc(20);
-						memcpy(send_buf[k], &r_data[i], 20);
+						send_buf[send_buf_len] = (byte *)malloc(20);
+						memcpy(send_buf[send_buf_len], &r_data[i], 20);
+						send_buf_len++;
+					}
+					else
+					{
+						if (isNewUpdate)
+						{
+							decrTtl(&r_data[i]);
+							send_buf[k] = (byte *)malloc(20);
+							memcpy(send_buf[k], &r_data[i], 20);
+						}
 					}
 				}
+				i += 20;
 			}
-			i += 20;
-		}
 
-		/*
-		//Save arduino Id
-		for (int i = 0; i < 8; i++)
-		{
+			/*
+			//Save arduino Id
+			for (int i = 0; i < 8; i++)
+			{
 			id_temp[i] = r_data[7 - i];
+			}
+			memcpy(&r_arduinoId, id_temp, 8);
+			free(id_temp);
+
+			//Save temperature and humidity
+			r_t = r_data[8];
+			r_humidity = r_data[9];
+
+			//Save CO2 levels
+			for (int i = 0; i < 2; i++)
+			{
+				temp[i] = r_data[11 - i]; //10 + 1 - i (little Endian)
+			}
+			memcpy(&r_CO2, temp, 2);
+
+			//Save tvoc levels
+			for (int i = 0; i < 2; i++)
+			{
+				temp[i] = r_data[13 - i]; //12 + 1 - i (little Endian)
+			}
+			//free malloc
+			memcpy(&r_tvoc, temp, 2);
+
+			//Save update Id
+			for (int i = 0; i < 2; i++)
+			{
+				temp[i] = r_data[15 - i]; //14 + 1 - i (little Endian)
+			}
+			memcpy(&r_upId, temp, 2);
+
+			//free malloc
+			free(temp);
+			//Print all to serial
+			Serial.print("Arduino Id: ");
+			Serial.print(r_arduinoId);
+			Serial.print(";T: ");
+			Serial.print(r_t);
+			Serial.print(";Hum: ");
+			Serial.print(r_humidity);
+			Serial.print("%;CO2: ");
+			Serial.print(r_CO2);
+			Serial.print("ppm;Tvoc: ");
+			Serial.print(r_tvoc);
+			Serial.print("ppm;upId: ");
+			Serial.print(r_upId);
+			Serial.println();
+			//print RSSI of packet
+			Serial.print(" | RSSI: ");
+			Serial.print(LoRa.packetRssi());
+			Serial.print(", SNR: ");
+			Serial.println(LoRa.packetSnr());
+			blinking(50, 3);*/
+			free(r_data);
 		}
-		memcpy(&r_arduinoId, id_temp, 8);
-		free(id_temp);
-
-		//Save temperature and humidity
-		r_t = r_data[8];
-		r_humidity = r_data[9];
-
-		//Save CO2 levels
-		for (int i = 0; i < 2; i++)
-		{
-			temp[i] = r_data[11 - i]; //10 + 1 - i (little Endian)
-		}
-		memcpy(&r_CO2, temp, 2);
-
-		//Save tvoc levels
-		for (int i = 0; i < 2; i++)
-		{
-			temp[i] = r_data[13 - i]; //12 + 1 - i (little Endian)
-		}
-		//free malloc
-		memcpy(&r_tvoc, temp, 2);
-
-		//Save update Id
-		for (int i = 0; i < 2; i++)
-		{
-			temp[i] = r_data[15 - i]; //14 + 1 - i (little Endian)
-		}
-		memcpy(&r_upId, temp, 2);
-
-		//free malloc
-		free(temp);
-		//Print all to serial
-		Serial.print("Arduino Id: ");
-		Serial.print(r_arduinoId);
-		Serial.print(";T: ");
-		Serial.print(r_t);
-		Serial.print(";Hum: ");
-		Serial.print(r_humidity);
-		Serial.print("%;CO2: ");
-		Serial.print(r_CO2);
-		Serial.print("ppm;Tvoc: ");
-		Serial.print(r_tvoc);
-		Serial.print("ppm;upId: ");
-		Serial.print(r_upId);
-		Serial.println();
-		//print RSSI of packet
-		Serial.print(" | RSSI: ");
-		Serial.print(LoRa.packetRssi());
-		Serial.print(", SNR: ");
-		Serial.println(LoRa.packetSnr());
-		blinking(50, 3);*/
-		free(r_data);
+	}
+	else
+	{
+		LoRa.sleep();
+		LowPower.sleep(interval - (millis() - lastSendTime));
 	}
 }
 
@@ -282,14 +294,16 @@ byte *dataToPacket(byte t, byte humidity, uint16_t CO2, uint16_t tvoc, uint16_t 
 	byte *packet;
 	byte *data;
 	byte ttl = ttl_s;
-	byte res[] = {0x00, 0x00, 0x00};
+	byte protocol[] = {0x12};
+	byte res[] = {0x00, 0x00};
 
 	data = dataToByte(t, humidity, CO2, tvoc, upId);
 	packet = (byte *)malloc(20);
 	memcpy(packet, UniqueID8, 8);
 	memcpy(packet + 8, data, 8);
 	memcpy(packet + 16, &ttl, 1);
-	memcpy(packet + 17, res, 3);
+	memcpy(packet + 17, protocol, 1);
+	memcpy(packet + 18, res, 2);
 	free(data);
 	return packet;
 }
