@@ -13,13 +13,16 @@
 
 #define inter_s 10000 //ms
 #define ttl_s 7		  //hops
+#define SF 7
+#define BW 125E3
 
 CCS811 air_sensor;
 DHT_Unified dht(DHTPIN, DHTTYPE);
 
 uint16_t upId = 0;
 long lastSendTime = 0;
-long interval = inter_s;
+int interval = inter_s;
+int dutyInterval;
 byte *send_buf[12];
 short send_buf_len = 0;
 
@@ -36,7 +39,8 @@ void setup()
 		delay(5000);
 	}
 	LoRa.enableCrc();
-
+	LoRa.setSpreadingFactor(SF);
+	LoRa.setSignalBandwidth(BW);
 	//Set random sending window
 	lastSendTime = random(inter_s * 2);
 
@@ -51,7 +55,6 @@ void setup()
 
 	air_sensor.setMeasCycle(air_sensor.eCycle_10s);
 }
-
 
 void loop()
 {
@@ -72,8 +75,8 @@ void loop()
 	}*/
 
 	// send packet
-	if ((millis() - lastSendTime) > interval) //Sending window open?
-	{
+	if ((millis() - lastSendTime) > interval && (millis() - lastSendTime) > dutyInterval)
+	{													  //Sending window open? Duty Cycle sending window open?
 		if (air_sensor.checkDataReady() && DHTReady(dht)) //Data from sensors?
 		{
 			byte *new_packet;
@@ -99,6 +102,8 @@ void loop()
 				upId = 0;
 			else
 				upId++;
+
+			dutyInterval = dutyCycle(send_buf_len*20);
 
 			freePByteArr(send_buf, send_buf_len);
 			send_buf_len = 0;
@@ -362,4 +367,13 @@ uint8_t getHum(DHT_Unified d)
 	h = (int)e1.relative_humidity;
 	memcpy(&temp, &h, 8);
 	return temp;
+}
+
+int dutyCycle(int PL)
+{
+	float T_sym = pow(2, SF) / (BW/1E3);
+	float n_payload = 8 + ceil((8 * PL + 16) / 28) * 5;
+	float T_preamble = (8 + 4.25) * T_sym;
+	float T_payload = n_payload * T_sym;
+	return (int)ceil((T_preamble + T_payload) * 99);
 }

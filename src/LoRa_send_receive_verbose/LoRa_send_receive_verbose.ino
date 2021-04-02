@@ -5,9 +5,12 @@
 #include <stdint.h>
 #define inter_s 10000 //ms
 #define ttl_s 7		  //hops
+#define SF 7
+#define BW 125E3
 
 long lastSendTime = 0;
 int interval = inter_s;
+int dutyInterval;
 int8_t t = 20, humidity = 70;
 uint16_t CO2 = 10000, tvoc = 500, upId = 0;
 byte *send_buf[12];
@@ -34,6 +37,8 @@ void setup()
 	}
 
 	LoRa.enableCrc();
+	LoRa.setSpreadingFactor(SF);
+	LoRa.setSignalBandwidth(BW);
 	//Set random sending window
 	lastSendTime = random(inter_s * 2);
 }
@@ -42,8 +47,8 @@ void loop()
 {
 
 	// send packet
-	if (millis() - lastSendTime > interval) //Sending window open?
-	{
+	if ((millis() - lastSendTime > interval) && (millis() - lastSendTime) > dutyInterval)
+	{ //Sending window open? Duty Cycle sending window open?
 		byte *new_packet;
 
 		//Gather sensor data
@@ -68,9 +73,13 @@ void loop()
 		else
 			upId++;
 
+		dutyInterval = dutyCycle(send_buf_len*20);
+
 		Serial.println("----------Sent-----------");
 		printByteArr(send_buf, send_buf_len, 20);
-
+		Serial.println("Interval: ");
+		Serial.print(dutyInterval);
+		Serial.println();
 		freePByteArr(send_buf, send_buf_len);
 		send_buf_len = 0;
 
@@ -203,13 +212,13 @@ void loop()
 			Serial.print(r_tvoc);
 			Serial.print("ppm;upId: ");
 			Serial.print(r_upId);
-			Serial.println();
+			Serial.println();*/
 			//print RSSI of packet
 			Serial.print(" | RSSI: ");
 			Serial.print(LoRa.packetRssi());
 			Serial.print(", SNR: ");
 			Serial.println(LoRa.packetSnr());
-			blinking(50, 3);*/
+
 			free(r_data);
 		}
 	}
@@ -362,4 +371,13 @@ byte *concatArr(byte *x, byte *y, int len)
 	}
 
 	return z;
+}
+
+int dutyCycle(int PL)
+{
+	float T_sym = pow(2, SF) / (BW/1E3);
+	float n_payload = 8 + ceil((8 * PL + 16) / 28) * 5;
+	float T_preamble = (8 + 4.25) * T_sym;
+	float T_payload = n_payload * T_sym;
+	return (int)ceil((T_preamble + T_payload) * 99);
 }
