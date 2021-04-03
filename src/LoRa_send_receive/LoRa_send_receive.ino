@@ -75,8 +75,9 @@ void loop()
 	}*/
 
 	// send packet
-	if ((millis() - lastSendTime) > interval && (millis() - lastSendTime) > dutyInterval)
-	{													  //Sending window open? Duty Cycle sending window open?
+	//Sending window open? Duty Cycle sending window open?
+	if (millis() - lastSendTime > max(interval, dutyInterval))
+	{
 		if (air_sensor.checkDataReady() && DHTReady(dht)) //Data from sensors?
 		{
 			byte *new_packet;
@@ -103,7 +104,7 @@ void loop()
 			else
 				upId++;
 
-			dutyInterval = dutyCycle(send_buf_len*20);
+			dutyInterval = dutyCycle(send_buf_len * 20);
 
 			freePByteArr(send_buf, send_buf_len);
 			send_buf_len = 0;
@@ -191,7 +192,7 @@ void loop()
 	else
 	{
 		LoRa.sleep();
-		LowPower.sleep(interval - (millis() - lastSendTime));
+		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}
 }
 
@@ -371,9 +372,10 @@ uint8_t getHum(DHT_Unified d)
 
 int dutyCycle(int PL)
 {
-	float T_sym = pow(2, SF) / (BW/1E3);
-	float n_payload = 8 + ceil((8 * PL + 16) / 28) * 5;
+	float T_sym = pow(2, SF) / (BW / 1E3);
+	float n_payload = 8 + ceil((float)(8 * PL + 16) / 28) * 5;
 	float T_preamble = (8 + 4.25) * T_sym;
 	float T_payload = n_payload * T_sym;
+
 	return (int)ceil((T_preamble + T_payload) * 99);
 }

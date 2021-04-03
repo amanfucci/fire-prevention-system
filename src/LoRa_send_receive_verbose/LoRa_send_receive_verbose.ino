@@ -47,8 +47,9 @@ void loop()
 {
 
 	// send packet
-	if ((millis() - lastSendTime > interval) && (millis() - lastSendTime) > dutyInterval)
-	{ //Sending window open? Duty Cycle sending window open?
+	//Sending window open? Duty Cycle sending window open?
+	if (millis() - lastSendTime > max(interval, dutyInterval))
+	{
 		byte *new_packet;
 
 		//Gather sensor data
@@ -73,13 +74,15 @@ void loop()
 		else
 			upId++;
 
-		dutyInterval = dutyCycle(send_buf_len*20);
-
 		Serial.println("----------Sent-----------");
 		printByteArr(send_buf, send_buf_len, 20);
-		Serial.println("Interval: ");
+
+		//Set Duty Cycle Interval
+		dutyInterval = dutyCycle(send_buf_len * 20);
+		Serial.print(";Interval: ");
 		Serial.print(dutyInterval);
 		Serial.println();
+
 		freePByteArr(send_buf, send_buf_len);
 		send_buf_len = 0;
 
@@ -225,7 +228,7 @@ void loop()
 	else
 	{
 		LoRa.sleep();
-		LowPower.sleep(interval - (millis() - lastSendTime));
+		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}
 }
 
@@ -375,9 +378,21 @@ byte *concatArr(byte *x, byte *y, int len)
 
 int dutyCycle(int PL)
 {
-	float T_sym = pow(2, SF) / (BW/1E3);
-	float n_payload = 8 + ceil((8 * PL + 16) / 28) * 5;
+	float T_sym = pow(2, SF) / (BW / 1E3);
+	float n_payload = 8 + ceil((float)(8 * PL + 16) / 28) * 5;
 	float T_preamble = (8 + 4.25) * T_sym;
 	float T_payload = n_payload * T_sym;
+
+	Serial.print("pl:");
+	Serial.print(PL);
+	Serial.print(";n_payload:");
+	Serial.print(n_payload, 6);
+	Serial.print(";T_sym:");
+	Serial.print(T_sym, 6);
+	Serial.print(";T_preamble:");
+	Serial.print(T_preamble, 6);
+	Serial.print(";T_payload:");
+	Serial.print(T_payload, 6);
+
 	return (int)ceil((T_preamble + T_payload) * 99);
 }
