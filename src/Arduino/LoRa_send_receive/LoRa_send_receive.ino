@@ -180,7 +180,7 @@ void loop()
 	}
 	else
 	{
-		//If send_buf full full wait till sending window open
+		//If send_buf full wait till sending window open
 		LoRa.sleep();
 		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}

@@ -10,7 +10,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
-public class App {
+public class SerialListener {
 
 	SerialPort activePort;
 	SerialPort[] ports = SerialPort.getCommPorts();
@@ -63,7 +63,7 @@ public class App {
 	}
 
 	public static void main(String[] args) {
-		App mainClass = new App();
+		SerialListener mainClass = new SerialListener();
 		mainClass.setPort(0);
 	}
 
