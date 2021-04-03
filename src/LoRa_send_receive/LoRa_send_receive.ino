@@ -28,6 +28,7 @@ void setup()
 	LoRa.enableCrc();
 	LoRa.setSpreadingFactor(SF);
 	LoRa.setSignalBandwidth(BW);
+	LoRa.setCodingRate4(CR);
 	//Set random sending window
 	lastSendTime = random(inter_s * 2);
 
@@ -178,6 +179,7 @@ void loop()
 	}
 	else
 	{
+		//If send_buf full full wait till sending window open
 		LoRa.sleep();
 		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}

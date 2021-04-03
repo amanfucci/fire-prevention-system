@@ -178,7 +178,7 @@ uint8_t getHum(DHT_Unified d)
 int dutyCycle(int PL)
 {
 	float T_sym = pow(2, SF) / (BW / 1E3);
-	float n_payload = 8 + ceil((float)(8 * PL + 16) / 28) * 5;
+	float n_payload = 8 + ceil((float)(8 * PL - 4*SF + 44) /(4*SF)) * CR;
 	float T_preamble = (8 + 4.25) * T_sym;
 	float T_payload = n_payload * T_sym;
 

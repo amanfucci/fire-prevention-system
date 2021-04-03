@@ -33,6 +33,7 @@ void setup()
 	LoRa.enableCrc();
 	LoRa.setSpreadingFactor(SF);
 	LoRa.setSignalBandwidth(BW);
+	LoRa.setCodingRate4(CR);
 	//Set random sending window
 	lastSendTime = random(inter_s * 2);
 }
@@ -114,7 +115,7 @@ void loop()
 			//Add to buffer
 			i = 0;
 			while (send_buf_len < 11 && i < packet_size)
-			{ //TTL > 0? My packet? My protocol?
+			{ //TTL > 0? Not mine? My protocol?
 				if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8) && r_data[i + 17] == 0x12)
 				{
 					int k;
@@ -221,6 +222,7 @@ void loop()
 	}
 	else
 	{
+		//If send_buf full full wait till sending window open
 		LoRa.sleep();
 		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}

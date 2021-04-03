@@ -12,6 +12,7 @@
 #define DHTTYPE DHT22
 #define SF 7
 #define BW 125E3
+#define CR 5
 #define ttl_s 7		  //hops
 #define inter_s 10000 //ms
 
