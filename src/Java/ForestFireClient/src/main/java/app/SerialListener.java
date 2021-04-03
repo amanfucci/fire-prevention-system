@@ -1,5 +1,6 @@
 package app;
 
+import java.io.IOException;
 /*
 GDCuyasen
 http://gmac.2600tech.com/
@@ -37,13 +38,20 @@ public class SerialListener {
 				int size = event.getSerialPort().bytesAvailable();
 				byte[] buffer = new byte[size];
 				event.getSerialPort().readBytes(buffer, size);
+				
+				try {
+					new Thread(new ClientTLS(buffer, size)).start();
+				} catch (IOException e) {
+					// Manage exception
+				}
+
 				int i = 0;
-					for (byte b : buffer){
-						if(i % 20 == 0)
-							System.out.println();
-						System.out.print(String.format("%02X ", b));
-						i++;
-					}
+				for (byte b : buffer) {
+					if (i % 20 == 0)
+						System.out.println();
+					System.out.print(String.format("%02X ", b));
+					i++;
+				}
 			}
 
 			@Override
