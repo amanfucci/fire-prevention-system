@@ -117,6 +117,7 @@ void loop()
 			byte *r_data;
 			short packet_size = LoRa.available();
 			short i;
+
 			r_data = (byte *)malloc(packet_size);
 
 			//Reads data
