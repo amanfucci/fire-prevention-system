@@ -1,20 +1,7 @@
-#include <stdint.h>
-#include <SPI.h>
 #include <LoRa.h>
-#include <ArduinoUniqueID.h>
 #include <ArduinoLowPower.h>
 #include <CCS811.h>
-#include <Adafruit_Sensor.h>
-#include <DHT.h>
-#include <DHT_U.h>
-
-#define DHTPIN 0
-#define DHTTYPE DHT22
-
-#define inter_s 10000 //ms
-#define ttl_s 7		  //hops
-#define SF 7
-#define BW 125E3
+#include <manfuLora.h>
 
 CCS811 air_sensor;
 DHT_Unified dht(DHTPIN, DHTTYPE);
@@ -195,7 +182,7 @@ void loop()
 		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}
 }
-
+/*
 void freePByteArr(byte **arr, int d1)
 {
 	for (int i = 0; i < d1; i++)
@@ -378,4 +365,4 @@ int dutyCycle(int PL)
 	float T_payload = n_payload * T_sym;
 
 	return (int)ceil((T_preamble + T_payload) * 99);
-}
+}*/

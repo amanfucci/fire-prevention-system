@@ -1,12 +1,6 @@
-#include <SPI.h>
 #include <LoRa.h>
-#include <ArduinoUniqueID.h>
 #include <ArduinoLowPower.h>
-#include <stdint.h>
-#define inter_s 10000 //ms
-#define ttl_s 7		  //hops
-#define SF 7
-#define BW 125E3
+#include <manfuLora.h>
 
 long lastSendTime = 0;
 int interval = inter_s;
@@ -231,7 +225,7 @@ void loop()
 		LowPower.sleep(max(interval, dutyInterval) - (millis() - lastSendTime));
 	}
 }
-
+/*
 void freePByteArr(byte **arr, int d1)
 {
 	for (int i = 0; i < d1; i++)
@@ -383,16 +377,19 @@ int dutyCycle(int PL)
 	float T_preamble = (8 + 4.25) * T_sym;
 	float T_payload = n_payload * T_sym;
 
-	Serial.print("pl:");
-	Serial.print(PL);
-	Serial.print(";n_payload:");
-	Serial.print(n_payload, 6);
-	Serial.print(";T_sym:");
-	Serial.print(T_sym, 6);
-	Serial.print(";T_preamble:");
-	Serial.print(T_preamble, 6);
-	Serial.print(";T_payload:");
-	Serial.print(T_payload, 6);
+	if (Serial)
+	{
+		Serial.print("pl:");
+		Serial.print(PL);
+		Serial.print(";n_payload:");
+		Serial.print(n_payload, 6);
+		Serial.print(";T_sym:");
+		Serial.print(T_sym, 6);
+		Serial.print(";T_preamble:");
+		Serial.print(T_preamble, 6);
+		Serial.print(";T_payload:");
+		Serial.print(T_payload, 6);
+	}
 
 	return (int)ceil((T_preamble + T_payload) * 99);
-}
+}*/
