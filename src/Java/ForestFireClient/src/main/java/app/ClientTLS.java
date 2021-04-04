@@ -3,6 +3,7 @@ package app;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
+import java.security.KeyStore;
 
 /*
  * Don't forget to set the following system properties when you run the class:
@@ -50,10 +51,8 @@ public class ClientTLS implements Runnable {
         try {
             os.write(message, 0, size);
             os.flush();
-            os.close();
         } catch (IOException e) {
-            //Save error to log file
-            //or send log to server
+            System.out.println(e);
         }
         
     }
@@ -64,5 +63,14 @@ public class ClientTLS implements Runnable {
         socket.setEnabledCipherSuites(cipher_suites);
         return socket;
     }
+
+    public static void main(String[] args) {
+        System.setProperty("javax.net.ssl.keyStore","try1.store");
+        System.setProperty("javax.net.ssl.keyStorePassword","password");
+        System.setProperty("javax.net.ssl.trustStore","try1.store");
+        System.setProperty("javax.net.ssl.trustStorePassword","password");
+		SerialListener mainClass = new SerialListener();
+		mainClass.setPort(0);
+	}
 
 }

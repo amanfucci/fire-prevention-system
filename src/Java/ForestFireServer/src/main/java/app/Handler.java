@@ -21,16 +21,16 @@ public class Handler implements Runnable {
             byte[] data = new byte[240];
             int len = is.read(data);
 
-            int i = 0;
-            for (byte b : data) {
+            
+            for (int i = 0; i < len ; i++) {
                 if (i % 20 == 0)
                     System.out.println();
-                System.out.print(String.format("%02X ", b));
-                i++;
+                System.out.print(String.format("%02X ", data[i]));
             }
+            is.close();
             // Write to DB
         } catch (IOException e) {
-            // TODO: handle exception
+            System.out.println(e);
         }
 
     }

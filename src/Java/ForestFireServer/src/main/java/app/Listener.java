@@ -35,13 +35,18 @@ public class Listener {
     private static final String[] protocols = new String[] { "TLSv1.3" };
     private static final String[] cipher_suites = new String[] { "TLS_AES_128_GCM_SHA256" };
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
+        System.setProperty("javax.net.ssl.keyStore","try1.store");
+        System.setProperty("javax.net.ssl.keyStorePassword","password");
+        System.setProperty("javax.net.ssl.trustStore","try1.store");
+        System.setProperty("javax.net.ssl.trustStorePassword","password");
+
         try {
             EchoServer server = EchoServer.create(port);
             new Thread(server).start();
 
         } catch (IOException e) {
-            // Manage Exception
+            System.out.println(e);
         }
     }
 
@@ -74,6 +79,7 @@ public class Listener {
                 try {
                     new Thread(new Handler((SSLSocket) sslServerSocket.accept())).start();
                 } catch (IOException e) {
+                    System.out.println(e);
                 }
             }
 

@@ -46,7 +46,7 @@ void loop()
 		}
 
 		Serial.write(r_data, packet_size);
-
+		blinking(50,3);
 		free(r_data);
 	}
 }

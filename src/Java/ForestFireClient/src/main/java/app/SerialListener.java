@@ -70,9 +70,4 @@ public class SerialListener {
 		reader.close();
 	}
 
-	public static void main(String[] args) {
-		SerialListener mainClass = new SerialListener();
-		mainClass.setPort(0);
-	}
-
 }
