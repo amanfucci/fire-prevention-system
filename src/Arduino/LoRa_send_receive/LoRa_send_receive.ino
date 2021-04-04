@@ -115,67 +115,69 @@ void loop()
 		if (LoRa.parsePacket())
 		{
 			byte *r_data;
-			short packet_size = LoRa.available();
 			short i;
+			short packet_size = LoRa.available();
 
-			r_data = (byte *)malloc(packet_size);
-
-			//Reads data
-			i = 0;
-			while (LoRa.available())
+			if (packet_size % 20 == 0) //Is of correct length?
 			{
-				r_data[i] = LoRa.read();
-				i++;
-			}
-
-			//Add to buffer
-			i = 0;
-			while (send_buf_len < 11 && i < packet_size)
-			{ //TTL > 0? My packet? My protocol?
-				if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8) && r_data[i + 17] == 0x12)
+				r_data = (byte *)malloc(packet_size);
+				//Reads data
+				i = 0;
+				while (LoRa.available())
 				{
-					int k;
-					bool isNewID = true;	 //New id?
-					bool isNewUpdate = true; //New update?
+					r_data[i] = LoRa.read();
+					i++;
+				}
 
-					for (k = 0; k < send_buf_len; k++)
+				//Add to buffer
+				i = 0;
+				while (send_buf_len < 11 && i < packet_size)
+				{ //TTL > 0? My packet? My protocol?
+					if (getTtl(&r_data[i]) > 0 && memcmp(UniqueID8, &r_data[i], 8) && r_data[i + 17] == 0x12)
 					{
-						if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+						int k;
+						bool isNewID = true;	 //New id?
+						bool isNewUpdate = true; //New update?
+
+						for (k = 0; k < send_buf_len; k++)
 						{
-							isNewID = false;
+							if (!memcmp(send_buf[k], &r_data[i], 8)) //Same id as one in buffer?
+							{
+								isNewID = false;
 
-							if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
-							{
-								isNewUpdate = false;
+								if (memcmp(send_buf[k] + 14, &r_data[i] + 14, 2) < 0) //Lower upID?
+								{
+									isNewUpdate = false;
+								}
+								else
+								{
+									free(send_buf[k]);
+								}
+								break; //Only one packet for each id
 							}
-							else
-							{
-								free(send_buf[k]);
-							}
-							break; //Only one packet for each id
 						}
-					}
 
-					if (isNewID)
-					{
-						decrTtl(&r_data[i]);
-						send_buf[send_buf_len] = (byte *)malloc(20);
-						memcpy(send_buf[send_buf_len], &r_data[i], 20);
-						send_buf_len++;
-					}
-					else
-					{
-						if (isNewUpdate)
+						if (isNewID)
 						{
 							decrTtl(&r_data[i]);
-							send_buf[k] = (byte *)malloc(20);
-							memcpy(send_buf[k], &r_data[i], 20);
+							send_buf[send_buf_len] = (byte *)malloc(20);
+							memcpy(send_buf[send_buf_len], &r_data[i], 20);
+							send_buf_len++;
+						}
+						else
+						{
+							if (isNewUpdate)
+							{
+								decrTtl(&r_data[i]);
+								send_buf[k] = (byte *)malloc(20);
+								memcpy(send_buf[k], &r_data[i], 20);
+							}
 						}
 					}
+					i += 20;
 				}
-				i += 20;
+				free(r_data);
 			}
-			free(r_data);
 		}
 	}
 	else

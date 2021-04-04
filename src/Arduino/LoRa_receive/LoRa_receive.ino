@@ -29,24 +29,51 @@ void setup()
 void loop()
 {
 
+	if (!Serial)
+	{
+		blinking(500, 1);
+		Serial.begin(115200);
+	}
+
 	// receive packet
 	if (LoRa.parsePacket())
 	{
 		byte *r_data;
-		short packet_size = LoRa.available();
 		short i;
-		r_data = (byte *)malloc(packet_size);
+		short packet_size = LoRa.available();
 
-		//Reads data
-		i = 0;
-		while (LoRa.available())
+		if (packet_size % 20 == 0) //Is of correct length?
 		{
-			r_data[i] = LoRa.read();
-			i++;
-		}
+			r_data = (byte *)malloc(packet_size);
+			//Reads data
+			i = 0;
+			while (LoRa.available())
+			{
+				r_data[i] = LoRa.read();
+				i++;
+			}
+			short n_mes = packet_size / 20;
 
-		Serial.write(r_data, packet_size);
-		blinking(50,3);
-		free(r_data);
+			//Check integrity of each message
+			for (i = 0; i < n_mes; i++)
+			{
+				if (r_data[20 * i + 17] != 0x12)
+				{ //Isn't my protocol?
+					n_mes = i;
+					break;
+				}
+			}
+
+			if (n_mes != 0)
+			{
+				Serial.write(r_data, n_mes * 20);
+				blinking(50, 3);
+			}
+			else
+			{
+				blinking(150, 1);
+			}
+			free(r_data);
+		}
 	}
 }
