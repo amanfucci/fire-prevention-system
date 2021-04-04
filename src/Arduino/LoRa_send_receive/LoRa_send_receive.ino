@@ -46,21 +46,6 @@ void setup()
 
 void loop()
 {
-	/*
-	if(!air_sensor.checkDataReady()){
-		if(DHTReady(dht)){
-			blinking(50,1);
-		}else{
-			blinking(200,1);
-		}		
-	}
-	else{
-		if(DHTReady(dht)){
-			blinking(500,1);
-		}else{
-			blinking(1000,1);
-		}			
-	}*/
 
 	// send packet
 	//Sending window open? Duty Cycle sending window open?

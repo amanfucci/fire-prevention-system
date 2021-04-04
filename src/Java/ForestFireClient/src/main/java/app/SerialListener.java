@@ -25,11 +25,20 @@ public class SerialListener {
 		}
 	}
 
+	public boolean isConnected (int port){
+		ports = SerialPort.getCommPorts();
+
+		return ports.length > (port);
+	}
+
 	public void setPort(int portIndex) {
 		activePort = ports[portIndex];
-
-		if (activePort.openPort())
+		activePort.setBaudRate(115200);
+		if (activePort.openPort()){
 			System.out.println(activePort.getPortDescription() + " port opened.");
+			System.out.println("Baud rate: " + activePort.getBaudRate());
+		}
+
 
 		activePort.addDataListener(new SerialPortDataListener() {
 
@@ -59,6 +68,7 @@ public class SerialListener {
 				return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
 			}
 		});
+
 	}
 
 	public void start() {

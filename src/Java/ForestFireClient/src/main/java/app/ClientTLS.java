@@ -33,7 +33,7 @@ public class ClientTLS implements Runnable {
     private static final int port = 57089;
     private static final String[] protocols = new String[] { "TLSv1.3" };
     private static final String[] cipher_suites = new String[] { "TLS_AES_128_GCM_SHA256" };
-    
+
     private final int size;
     private final byte[] message;
     private final SSLSocket socket;
@@ -54,7 +54,7 @@ public class ClientTLS implements Runnable {
         } catch (IOException e) {
             System.out.println(e);
         }
-        
+
     }
 
     public static SSLSocket createSocket(String host, int port) throws IOException {
@@ -64,13 +64,26 @@ public class ClientTLS implements Runnable {
         return socket;
     }
 
-    public static void main(String[] args) {
-        System.setProperty("javax.net.ssl.keyStore","try1.store");
-        System.setProperty("javax.net.ssl.keyStorePassword","password");
-        System.setProperty("javax.net.ssl.trustStore","try1.store");
-        System.setProperty("javax.net.ssl.trustStorePassword","password");
-		SerialListener mainClass = new SerialListener();
-		mainClass.setPort(0);
-	}
+    public static void main(String[] args) throws InterruptedException {
+        System.setProperty("javax.net.ssl.keyStore", "try1.store");
+        System.setProperty("javax.net.ssl.keyStorePassword", "password");
+        System.setProperty("javax.net.ssl.trustStore", "try1.store");
+        System.setProperty("javax.net.ssl.trustStorePassword", "password");
+        SerialListener mainClass;
+        while (true) {
+
+            mainClass = new SerialListener();
+            if (mainClass.isConnected(0)) {
+                mainClass.setPort(0);
+                while (mainClass.activePort.isOpen()) {
+                }
+            }
+            else{
+                System.out.println("\nNo device connected!");
+                Thread.sleep(1500);            
+            }
+
+        }
+    }
 
 }

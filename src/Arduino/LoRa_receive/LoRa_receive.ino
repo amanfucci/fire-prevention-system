@@ -1,8 +1,8 @@
 #include <LoRa.h>
 #include <manfuLora.h>
 
-byte *rec_buf[12];
-short rec_buf_len = 0;
+byte *send_buf[100];
+short send_buf_len = 0;
 
 void setup()
 {
@@ -29,12 +29,7 @@ void setup()
 void loop()
 {
 
-	if (!Serial)
-	{
-		blinking(500, 1);
-		Serial.begin(115200);
-	}
-
+		
 	// receive packet
 	if (LoRa.parsePacket())
 	{
@@ -52,28 +47,19 @@ void loop()
 				r_data[i] = LoRa.read();
 				i++;
 			}
-			short n_mes = packet_size / 20;
 
-			//Check integrity of each message
-			for (i = 0; i < n_mes; i++)
-			{
-				if (r_data[20 * i + 17] != 0x12)
-				{ //Isn't my protocol?
-					n_mes = i;
-					break;
+			//Add to buffer
+			i = 0;
+			while (i < packet_size && send_buf_len < 100)
+			{ //My protocol?
+				if (r_data[i + 17] == 0x12)
+				{
+					Serial.write(&r_data[i], 20);
+					send_buf_len++;
 				}
+				i += 20;
 			}
-
-			if (n_mes != 0)
-			{
-				Serial.write(r_data, n_mes * 20);
-				blinking(50, 3);
-			}
-			else
-			{
-				blinking(150, 1);
-			}
-			free(r_data);
+			send_buf_len = 0;
 		}
 	}
 }
