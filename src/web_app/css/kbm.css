@@ -1,0 +1,80 @@
+.header-fixed {
+	position: fixed !important;
+	z-index: 1029;
+	text-align: center;
+	width: 100%;
+}
+
+.carousel-item {
+	height: 100%;
+	min-height: 80vh;
+	background: no-repeat bottom center scroll;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.carousel-indicators-dark li {
+  box-sizing: content-box;
+  flex: 0 1 auto;
+  width: 10px;
+  height: 10px;
+  margin-right: 3px;
+  margin-left: 3px;
+  text-indent: -999px;
+  cursor: pointer;
+  background-color: #363d47;
+  background-clip: padding-box;
+  /*border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;*/
+  border-radius: 10px;
+  opacity: 0.5;
+  transition: opacity 0.6s ease;
+}
+
+.table-temp td {
+	min-width: 65px;
+}
+
+.icon-h1 {
+	font-size: 1.5rem;
+}
+
+.icon-h2 {
+	font-size: 1.4rem;
+}
+
+.icon-h3 {
+	font-size: 1.3rem;
+}
+
+.icon-h4 {
+	font-size: 1.2rem;
+}
+
+.icon-h5 {
+	font-size: 1.1rem;
+}
+
+.icon-h6 {
+	font-size: 1rem;
+}
+
+#selected_date {
+	min-width: 310px;
+}
+
+#selected_date_sm {
+	min-width: 155px;
+}
+
+.city-name {
+	min-width: 125px;
+}
+.bg-transparent-black{
+	background-color: rgba(105, 112, 122, 0.5);
+}
+::-webkit-scrollbar {
+	display: none;
+}

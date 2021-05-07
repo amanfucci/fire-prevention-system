@@ -1,0 +1,120 @@
+<!--
+		* KBM - TN Weather
+		* Copyright 2021 KBM
+		* Licensed under SEE_LICENSE (https://gitlab.com/polotecnologico/5-bia-2020-2021/kbm/terranova_client/-/blob/master/LICENSE)
+		*/-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>Tables - TN Weather</title>
+	<link rel="icon" type="image/x-icon" href="img/tn_icon.png">
+
+	<!--Theme js/css-->
+	<script id="ga-gtag" type="text/javascript" async src="js/js"></script>
+	<link rel="stylesheet" href="css/styles2.css">
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" type="text/css" href="assets/DataTables/datatables.min.css" />
+	<link rel="stylesheet" href="css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="css/daterangepicker.css">
+	<script src="js/all.min.js.download"></script>
+	<!--Icons-->
+	<script src="js/feather.min.js.download"></script>
+	<link rel="stylesheet" href="css/bootstrap-icons.css">
+	<link rel="stylesheet" href="css/font-awesome.css">
+	<link rel="stylesheet" href="css/kbm.css">
+</head>
+
+<body class="nav-fixed" data-new-gr-c-s-check-loaded="14.998.0" data-gr-ext-installed="">
+	<div id="topnav-container">
+	</div>
+	<div id="layoutSidenav">
+		<div id="sidenav-container">
+		</div>
+		<div id="layoutSidenav_content">
+			<main>
+				<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+					<div class="container">
+						<div class="page-header-content pt-4">
+							<div class="row align-items-center justify-content-between">
+								<div class="col-auto mt-4">
+									<h1 class="page-header-title">
+										<div class="page-header-icon">
+											<i class="bi bi-table icon-h1"></i>
+										</div>
+										Tables
+									</h1>
+									<div class="page-header-subtitle">View all the raw data
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+				<!-- Main page content-->
+				<div class="container mt-n10" id="data-content">
+
+					<div class="card mb-4">
+						<div class="card-header">NO DATA</div>
+						<div class="card-body">
+							<div class="dataTable">
+								<table id="table-0" class="table table-responsive-lg table-bordered table-hover nowrap"
+									style="width: 100%;">
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<!--Handlebars Template-->
+				<script id="card-template" type="text/x-handlebars-template">
+					{{#each city}}
+					<!--{{name}}-->
+					<div class="card mb-4">
+						<div class="card-header">{{name}}</div>
+						<div class="card-body">
+							<div class="dataTable">
+								<table id="table-{{@index}}" class="table table-bordered table-hover nowrap" style="width: 100%;">
+								</table>
+							</div>
+						</div>
+					</div>
+					{{/each}}
+				</script>
+
+			</main>
+			<div id="footer-container"></div>
+		</div>
+	</div>
+
+
+	<!--JQuery-->
+	<script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js"></script>
+
+	<!--KBM Hb-->
+	<script type="text/javascript" src="js/handlebars.min-v4.7.6.js"></script>
+	<script type="text/javascript" src="assets/handlebars/page_layout.js"></script>
+
+	<!--Theme js-->
+	<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+	<script type="text/javascript" src="js/scripts.js"></script>
+	<script type="text/javascript" src="js/moment-with-locales.min.js"></script>
+	<script type="text/javascript" src="js/daterangepicker.min.js"></script>
+	<!--KBM Tables-->
+	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="assets/DataTables/datatables.min.js"></script>
+	<!--KBM js-->
+	<script type="text/javascript" src="js/dataTables-sorting-kbm.js"></script>
+	<script type="text/javascript" src="js/date-range-picker-table-kbm.js"></script>
+
+</body>
+
+</html>

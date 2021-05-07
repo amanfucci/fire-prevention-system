@@ -1,0 +1,274 @@
+<!--
+		* KBM - TN Weather
+		* Copyright 2021 KBM
+		* Licensed under SEE_LICENSE (https://gitlab.com/polotecnologico/5-bia-2020-2021/kbm/terranova_client/-/blob/master/LICENSE)
+		*/-->
+<!DOCTYPE html>
+<html lang="it" class="fontawesome-i2svg-active fontawesome-i2svg-complete">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="WebApp per la visualizzazione dei parametri meteo">
+	<meta name="author" content="TerraNova, KBM">
+	<title>Home - TN Weather</title>
+	<link rel="icon" type="image/x-icon" href="img/tn_icon.png">
+
+	<!--Theme js/css-->
+	<script id="ga-gtag" type="text/javascript" async="" src="js/js"></script>
+	<link href="css/styles2.css" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
+	<link href="css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<link href="css/daterangepicker.css" rel="stylesheet">
+	<script src="js/all.min.js.download"></script>
+	<script src="js/feather.min.js.download"></script>
+	<link href="css/chart.css" rel="stylesheet">
+	<!-- Bootstrap Icons -->
+	<link rel="stylesheet" href="css/bootstrap-icons.css">
+	<!-- KBM css -->
+	<link rel="stylesheet" href="css/kbm.css">
+
+
+</head>
+
+<body class="nav-fixed" data-new-gr-c-s-check-loaded="14.998.0" data-gr-ext-installed="" id="myBody">
+
+	<div id="topnav-container">
+	</div>
+
+	<div id="layoutSidenav">
+
+		<div id="sidenav-container">
+		</div>
+
+		<!-- Main page-->
+		<div id="layoutSidenav_content" style="background-color: #004566;">
+			<main>
+				<!-- Main page header-->
+				<header class="page-header-light bg-light ">
+					<div class="container">
+						<div class="page-header-content pt-4 pb-3">
+							<div class="row align-items-center justify-content-center">
+								<!-- bw btn -->
+								<div class="col-auto mt-4 align-middle">
+									<button class="btn btn-transparent-dark btn-icon " type="button" id="bw_date_btn">
+										<i class="bi bi-chevron-left icon-h5" aria-hidden="true"></i>
+									</button>
+								</div>
+
+								<!--Date display-->
+								<div class="col-auto mt-4 align-middle text-lg font-weight-100 text-dark">
+									<!-- Large date display -->
+									<div class="d-none d-md-block text-center" id="selected_date">
+									</div>
+									<!-- Small date display -->
+									<div class="d-block d-md-none text-center" id="selected_date_sm">
+									</div>
+								</div>
+
+								<!-- fw btn -->
+								<div class="col-auto mt-4 align-middle">
+									<button class="btn btn-transparent-dark btn-icon" type="button" id="fw_date_btn">
+										<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+
+				<!-- Main page content-->
+				<div class="container-fluid p-0 mb-0 align-middle justify-content-center">
+
+					<div id="carouselExampleCaptions" class="carousel slide carousel-fade align-middle justify-content-center">
+						<ol class="carousel-indicators carousel-indicators-dark">
+							<li id="indicator-0" data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+						</ol>
+						<div class="carousel-inner justify-content-center">
+							<!--NO DATA-->
+							<div id="item-0" class="carousel-item active h-100"
+								style="background-image: url('img/NO DATA.png')">
+								<div class="carousel-caption d-block">
+									<!--Events-->
+									<div class="row justify-content-center ">
+										<div class="col-auto">
+											<h1 class="bi bi-x-circle-fill icon-h2" aria-hidden="true"></h1>
+										</div>
+									</div>
+									<!--End of Events-->
+									<!--Temp-->
+									<div class="row justify-content-center">
+										<div class="col-auto">
+											<table
+												class="table table-borderless table-temp table-sm text-dark text-uppercase-expanded font-weight-400">
+												<tbody>
+													<tr>
+														<td class="text-xs align-middle">min</td>
+														<td class="text-sm align-middle">avg</td>
+														<td class="text-xs align-middle">max</td>
+													</tr>
+													<tr>
+														<td class="text-sm align-middle" id="t_min_be">N/D</td>
+														<td class="text-lg align-middle" id="t_avg_be">N/D</td>
+														<td class="text-sm align-middle" id="t_max_be">N/D</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<!--End of Temp-->
+									<!--Btns-->
+									<div class="row align-items-center justify-content-center">
+										<div class="col-auto align-middle">
+											<a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+												<h1 class="bi bi-chevron-left" aria-hidden="true"></h1>
+												<span class="sr-only">Previous</span>
+											</a>
+										</div>
+										<div class="col-auto city-name">
+											<h2>NO DATA</h2>
+										</div>
+										<div class="col-auto align-middle">
+											<a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+												<h2 class="bi bi-chevron-right" aria-hidden="true"></h2>
+												<span class="sr-only">Next</span>
+											</a>
+										</div>
+									</div>
+									<!--End of Btns-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--Handlebars Template-->
+					<script id="carousel-template" type="text/x-handlebars-template">
+						<ol class="carousel-indicators mb-3 pb-3 {{#if error}} carousel-indicators-dark{{/if}}">
+							{{#each day_data}}
+							<li id="indicator-{{@index}}" data-target="#carouselExampleCaptions" data-slide-to="{{@index}}"
+							{{#if @first}} class="active"{{/if}}></li>
+							{{/each}}
+						</ol>
+						<div class="carousel-inner">
+							{{#each day_data}}
+							<!--{{name}}-->
+							<div id="item-{{@index}}" class="carousel-item {{#if @first}}active {{/if}} h-100"
+							style="background-image: url('img/{{name}}.png')">
+
+								<div class="carousel-caption d-block
+								{{#unless error}}shadow bg-transparent-black{{/unless}}">
+									<!--Events-->
+									<div class="row justify-content-center ">
+										{{#if error}}
+										<div class="col-auto">
+											<h1 class="bi bi-x-circle-fill icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+										{{#if sunny}}
+										<div class="col-auto">
+											<h1 class="bi bi-sun-fill text-light icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+										{{#if rain}}
+										<div class="col-auto">
+											<h1 class="bi bi-cloud-rain-fill text-light icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+										{{#if storm}}
+										<div class="col-auto">
+											<h1 class="bi bi-cloud-lightning-rain-fill text-light icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+										{{#if snow}}
+										<div class="col-auto">
+											<h1 class="bi bi-cloud-snow-fill text-light icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+										{{#if fog}}
+										<div class="col-auto">
+											<h1 class="bi bi-cloud-fog2-fill text-light icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+										{{#if hail}}
+										<div class="col-auto">
+											<h1 class="bi bi-cloud-hail-fill text-light icon-h2" aria-hidden="true"></h1>
+										</div>
+										{{/if}}
+									</div>
+									<!--End of Events-->
+									<!--Temp-->
+									<div class="row justify-content-center pb-0">
+										<div class="col-auto">
+											<table
+												class="table table-borderless table-temp table-sm 
+												{{#if error}}text-dark{{else}}text-gray-100{{/if}}
+												text-uppercase-expanded font-weight-400">
+												<tbody>
+													<tr>
+														<td class="text-xs align-middle">min</td>
+														<td class="text-sm align-middle">avg</td>
+														<td class="text-xs align-middle">max</td>
+													</tr>
+													<tr>
+														<td class="text-sm align-middle" id="t_min_be">{{tmin}}{{#unless error}}°C{{/unless}}</td>
+														<td class="text-lg align-middle" id="t_avg_be">{{tavg}}{{#unless error}}°C{{/unless}}</td>
+														<td class="text-sm align-middle" id="t_max_be">{{tmax}}{{#unless error}}°C{{/unless}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<!--End of Temp-->
+									<!--Btns-->
+									<div class="row align-items-center justify-content-center pt-0 pb-2">
+										<div class="col-auto align-middle">
+											<a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+												<h1 class="bi bi-chevron-left {{#unless error}}text-light{{/unless}}" aria-hidden="true"></h1>
+												<span class="sr-only">Previous</span>
+											</a>
+										</div>
+										<div class="col-auto city-name">
+											<h2 class="{{#unless error}}text-light{{/unless}}">{{name}}</h2>
+										</div>
+										<div class="col-auto align-middle">
+											<a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+												<h2 class="bi bi-chevron-right {{#unless error}}text-light{{/unless}}" aria-hidden="true"></h2>
+												<span class="sr-only">Next</span>
+											</a>
+										</div>
+									</div>
+									<!--End of Btns-->
+								</div>
+							</div>
+							{{/each}}
+						</div>
+
+					</script>
+				</div>
+			</main>
+
+			<div id="footer-container" style="background-color: #004566;"></div>
+		</div>
+	</div>
+
+	<!--JQuery-->
+	<script src="js/jquery-3.5.1.min.js"></script>
+	<script src="js/jquery.cookie.js"></script>
+	<!--Date Picker js-->
+	<script src="js/moment-with-locales.min.js"></script>
+	<script src="js/daterangepicker.min.js"></script>
+	<!--KBM Hb-->
+	<script src="js/handlebars.min-v4.7.6.js"></script>
+	<script src="assets/handlebars/page_layout.js"></script>
+	<script src="js/date-picker-kbm.js"></script>
+	<!--Theme js-->
+	<script defer src="js/bootstrap.bundle.min.js"></script>
+	<script defer src="js/scripts.js"></script>
+	<!--KBM js-->
+	<script defer src="js/carousel-kbm.js"></script>
+	<script defer src="js/sidenav-inverter-fun-kbm.js"></script>
+
+</body>
+
+</html>
