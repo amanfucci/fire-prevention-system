@@ -1,40 +1,77 @@
-DROP DATABASE IF EXISTS manfu_lora;
-CREATE DATABASE IF NOT EXISTS manfu_lora;
-USE manfu_lora;
---
---STRUCTURE
---
+DROP DATABASE IF EXISTS fire_prevention_system;
+CREATE DATABASE IF NOT EXISTS fire_prevention_system;
+USE fire_prevention_system;
 
-CREATE TABLE nodes (
+/*STRUCTURE*/
+
+CREATE TABLE sensori (
   arduinoId binary(8) NOT NULL PRIMARY KEY,
   lat int(11) DEFAULT NULL,
   lon int(11) DEFAULT NULL,
-  first_use date DEFAULT NULL
+  data_inst date DEFAULT NULL
 );
 
-CREATE TABLE data (
+CREATE TABLE misurazioni (
   dataId bigint(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   arduinoId binary(8) NOT NULL,
-  temperature tinyint(4) NOT NULL,
-  humidity tinyint(4) UNSIGNED NOT NULL,
-  CO2 smallint(6) UNSIGNED NOT NULL,
+  temperatura tinyint(4) NOT NULL,
+  umidita tinyint(4) UNSIGNED NOT NULL,
+  cO2 smallint(6) UNSIGNED NOT NULL,
   tvoc smallint(6) UNSIGNED NOT NULL,
   updateId smallint(6) UNSIGNED NOT NULL,
   timestamp timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  FOREIGN KEY (arduinoId) REFERENCES nodes (arduinoId),
+  FOREIGN KEY (arduinoId) REFERENCES sensori(arduinoId),
   INDEX(arduinoId),
   INDEX(updateId)
 );
 
---
---DATA
---
+CREATE TABLE utenti (
+  utenteId int(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  cf char(16) NOT NULL UNIQUE,
+  nome varchar(20) NOT NULL,
+  cognome varchar(20) NOT NULL,
+  telefono char(10) NOT NULL,
+  email varchar(50) NOT NULL,
+  pw char(64) NOT NULL,
+  ruolo set('tecnico','amministratore','supervisore') DEFAULT NULL,
+  ammId int(11) UNSIGNED DEFAULT NULL,
+  FOREIGN KEY (ammId) references utenti(utenteId)
+);
 
-INSERT INTO nodes (arduinoId, lat, lon, first_use) VALUES
+CREATE TABLE richieste (
+  richiestaId int(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  timestamp timestamp NOT NULL,
+  motivazione varchar(500) NOT NULL,
+  urgenza set('1', '2', '3') NOT NULL DEFAULT '3',
+  arduinoId binary(8) NOT NULL,
+  supId int(11) UNSIGNED NOT NULL,
+  FOREIGN KEY (supId) references utenti(utenteId),
+  FOREIGN KEY (arduinoId) references sensori(arduinoId)
+);
+
+CREATE TABLE interventi (
+  interventoId int(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  timestamp timestamp NOT NULL,
+  descrizione varchar(500) NOT NULL,
+  tecId int(11) UNSIGNED NOT NULL,
+  FOREIGN KEY (tecId) references utenti(utenteId)
+);
+
+CREATE TABLE ric_int (
+  richiestaId int(11) UNSIGNED NOT NULL,
+  interventoId int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (richiestaId, interventoId),
+  FOREIGN KEY (richiestaId) references richieste(richiestaId),
+  FOREIGN KEY (interventoId) references interventi(interventoId)
+);
+
+/*DATA*/
+
+INSERT INTO sensori (arduinoId, lat, lon, data_inst) VALUES
 (0x35202020ff09062d, NULL, NULL, NULL),
 (0x35202020ff09062e, NULL, NULL, NULL);
 
-INSERT INTO data (arduinoId, temperature, humidity, CO2, tvoc, updateId, timestamp) VALUES
+INSERT INTO misurazioni (arduinoId, temperatura, umidita, cO2, tvoc, updateId, timestamp) VALUES
 (0x35202020ff09062d, 25, 42, 555, 23, 169, '2021-04-05 15:16:08'),
 (0x35202020ff09062d, 25, 42, 555, 23, 169, '2021-04-05 15:16:08'),
 (0x35202020ff09062d, 25, 42, 561, 24, 170, '2021-04-05 15:16:22'),
