@@ -1,7 +1,7 @@
 /*!
-    * KBM - TN Weather
-    * Copyright 2021 KBM
-    * Licensed under SEE_LICENSE (https://gitlab.com/polotecnologico/5-bia-2020-2021/kbm/terranova_client/-/blob/master/LICENSE)
+    * MANFU - FPS
+    * Copyright 2021 MANFU
+    * Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
     */
 
 $(function () {

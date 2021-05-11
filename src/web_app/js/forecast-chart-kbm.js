@@ -1,7 +1,7 @@
 /*!
-		* KBM - TN Weather
-		* Copyright 2021 KBM
-		* Licensed under SEE_LICENSE (https://gitlab.com/polotecnologico/5-bia-2020-2021/kbm/terranova_client/-/blob/master/LICENSE)
+		* MANFU - FPS
+		* Copyright 2021 MANFU
+		* Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
 		*/
 
 $(function () {
@@ -140,12 +140,7 @@ $(function () {
 			contentType: 'application/x-www-form-urlencoded; charset=utf-8',
 			data: "&city=" + city_db_i,
 			cache: "false",
-			beforeSend: function (event, files, index, xhr, handler, callBack) {
-				$.ajax({
-					async: false,
-					url: 'assets/php/conn_close.php' // add path
-				});
-			}
+
 		}).done(function (data) {
 			dataSet[city_db_i] = JSON.parse(data);
 			setChart(dataSet[city_db_i], i);
@@ -169,12 +164,7 @@ $(function () {
 			url: "assets/php/get_city_n.php",
 			type: "get",
 			cache: "false",
-			beforeSend: function (event, files, index, xhr, handler, callBack) {
-				$.ajax({
-					async: false,
-					url: 'assets/php/conn_close.php' // add path
-				});
-			}
+
 		}).done(function (data) {
 			if (data[1] == '!') {
 				//Remove ! " from string, then split for |

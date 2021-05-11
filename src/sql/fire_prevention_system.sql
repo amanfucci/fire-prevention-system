@@ -428,7 +428,7 @@ INSERT INTO misurazioni (sensore, temperatura, umidita, co2, tvoc, updateId, tim
 (CONVERT (0x35202020ff09062d, UNSIGNED), 24, 43, 486, 13, 125, '2021-04-14 14:59:40');
 
 INSERT INTO opzioni (chiave, valore, descrizione)
-VALUES ('snapshot_interval', '10', "L'intervallo di tempo espresso in minuti per la creazione di uno snapshot.");
+VALUES ('snapshot_interval', '5', "L'intervallo di tempo espresso in minuti per la creazione di uno snapshot.");
 
 INSERT INTO snapshot (timestamp, titolo, descrizione) VALUES
 ('2021-05-10 14:22:20', NULL, NULL),

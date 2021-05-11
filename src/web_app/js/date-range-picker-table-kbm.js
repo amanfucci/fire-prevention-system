@@ -1,7 +1,7 @@
 /*!
-		* KBM - TN Weather
-		* Copyright 2021 KBM
-		* Licensed under SEE_LICENSE (https://gitlab.com/polotecnologico/5-bia-2020-2021/kbm/terranova_client/-/blob/master/LICENSE)
+		* MANFU - FPS
+		* Copyright 2021 MANFU
+		* Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
 		*/
 
 $(function () {
@@ -54,12 +54,7 @@ $(function () {
 		url: "assets/php/get_range.php",
 		type: "get",
 		cache: "false",
-		beforeSend: function (event, files, index, xhr, handler, callBack) {
-			$.ajax({
-				async: false,
-				url: 'assets/php/conn_close.php' // add path
-			});
-		}
+		
 	}).done(function (data) {
 		//On request received
 		var res = data.split('"').join('').split(";");
@@ -120,7 +115,7 @@ $(function () {
 					customize: function (win) {
 						$(win.document.body).find('thead')
 							.prepend(
-								'<img src="http://localhost/terranova/terranova_client/web_app/img/tn_logo.png" style="opacity: 0.7;padding:5px" />'
+								'<img src="http://localhost/terranova/terranova_client/web_app/img/pc_logo.png" style="opacity: 0.7;padding:5px" />'
 							);
 					},
 					exportOptions: {
@@ -196,12 +191,7 @@ $(function () {
 			data: "start=" + start.format("YYYY-MM-DD") + "&end=" + end.format("YYYY-MM-DD")
 				+ "&city=" + city_db_i,
 			cache: "false",
-			beforeSend: function (event, files, index, xhr, handler, callBack) {
-				$.ajax({
-					async: false,
-					url: 'assets/php/conn_close.php' // add path
-				});
-			}
+
 		}).done(function (data) {
 			if (data[1] == '!') {
 
@@ -269,12 +259,7 @@ $(function () {
 			url: "assets/php/get_city_n.php",
 			type: "get",
 			cache: "false",
-			beforeSend: function (event, files, index, xhr, handler, callBack) {
-				$.ajax({
-					async: false,
-					url: 'assets/php/conn_close.php' // add path
-				});
-			}
+
 		}).done(function (data) {
 			if (data[1] == '!') {
 				//Remove ! " from string, then split for |

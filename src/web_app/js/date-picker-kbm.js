@@ -1,7 +1,7 @@
 /*!
-		* KBM - TN Weather
-		* Copyright 2021 KBM
-		* Licensed under SEE_LICENSE (https://gitlab.com/polotecnologico/5-bia-2020-2021/kbm/terranova_client/-/blob/master/LICENSE)
+		* MANFU - FPS
+		* Copyright 2021 MANFU
+		* Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
 		*/
 
 $(function () {
@@ -102,12 +102,7 @@ $(function () {
 		url: "assets/php/get_range.php",
 		cache: "false",
 		type: "get",
-		beforeSend: function (event, files, index, xhr, handler, callBack) {
-			$.ajax({
-				async: false,
-				url: 'assets/php/conn_close.php' // add path
-			});
-		}
+		
 	}).done(function (data) {
 		//On request received
 		var res = data.split('"').join('').split(";");
@@ -150,12 +145,7 @@ $(function () {
 			cache: "false",
 			contentType: 'application/x-www-form-urlencoded; charset=utf-8',
 			data: "selected=" + selected.format("YYYY-MM-DD"),
-			beforeSend: function (event, files, index, xhr, handler, callBack) {
-				$.ajax({
-					async: false,
-					url: 'assets/php/conn_close.php' // add path
-				});
-			}
+
 		}).done(function (data) {
 			//On request received
 			city_n = 0;
