@@ -153,18 +153,28 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=root@localhost PROCEDURE set_snapshot_interval (IN par1 INT)
-    NO SQL
+CREATE DEFINER=root@localhost PROCEDURE set_snapshot_interval(IN par1 INT)
+    MODIFIES SQL DATA
 BEGIN
-ALTER EVENT take_snapshot ON SCHEDULE EVERY par1 MINUTE;
+ALTER EVENT auto_snapshot ON SCHEDULE EVERY par1 MINUTE;
 UPDATE opzioni SET valore = par1 WHERE chiave = "snapshot_interval";
 SET GLOBAL EVENT_SCHEDULER = "ON";
 END$$
 DELIMITER ;
 
 DELIMITER $$
+CREATE DEFINER=root@localhost PROCEDURE take_snapshot(IN par1 TIMESTAMP, IN par2 TEXT, IN par3 TEXT)
+    MODIFIES SQL DATA
+BEGIN
+INSERT INTO snapshot
+VALUE(par1, par2, par3);
+CALL add_to_snapshot(par1);
+END$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE DEFINER=root@localhost PROCEDURE eval(IN param TEXT)
-    NO SQL
+    MODIFIES SQL DATA
 begin 
     set @sql = param; 
     prepare stmt from @sql; 
@@ -175,11 +185,9 @@ DELIMITER ;
 
 /*EVENTS*/
 DELIMITER $$
-CREATE DEFINER=root@localhost EVENT take_snapshot ON SCHEDULE EVERY 10 MINUTE STARTS '1980-05-10 00:00:00.000000' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
-SET @snapshot = CURRENT_TIMESTAMP();
-INSERT INTO snapshot (timestamp)
-VALUE(@snapshot);
-CALL add_to_snapshot(@snapshot);
+CREATE DEFINER=root@localhost EVENT auto_snapshot ON SCHEDULE EVERY 5 MINUTE STARTS '1980-05-10 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+SET @ts = CURRENT_TIMESTAMP();
+CALL take_snapshot(@ts, NULL, NULL);
 END$$
 DELIMITER ;
 
@@ -420,7 +428,7 @@ INSERT INTO misurazioni (sensore, temperatura, umidita, co2, tvoc, updateId, tim
 (CONVERT (0x35202020ff09062d, UNSIGNED), 24, 43, 486, 13, 125, '2021-04-14 14:59:40');
 
 INSERT INTO opzioni (chiave, valore, descrizione)
-VALUES ('snapshot_interval', '10', "L'intervallo di tempo espresso in minuto per la creazione di uno snapshot.");
+VALUES ('snapshot_interval', '10', "L'intervallo di tempo espresso in minuti per la creazione di uno snapshot.");
 
 INSERT INTO snapshot (timestamp, titolo, descrizione) VALUES
 ('2021-05-10 14:22:20', NULL, NULL),
