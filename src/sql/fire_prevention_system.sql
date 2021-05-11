@@ -6,8 +6,8 @@ USE fire_prevention_system;
 
 CREATE TABLE sensori (
   arduinoId bigint NOT NULL PRIMARY KEY,
-  lat int DEFAULT NULL,
-  lon int DEFAULT NULL,
+  lat double DEFAULT NULL,
+  lng double DEFAULT NULL,
   data_inst date DEFAULT NULL,
   data_rim date DEFAULT NULL
 );
@@ -193,9 +193,9 @@ DELIMITER ;
 
 /*DATA*/
 
-INSERT INTO sensori (arduinoId) VALUES
-(CONVERT(0x35202020ff09062d, UNSIGNED)),
-(CONVERT(0x35202020ff09062e, UNSIGNED));
+INSERT INTO sensori VALUES
+(CONVERT(0x35202020ff09062d, UNSIGNED), 42.730058, 10.974754, '2021-04-05', NULL),
+(CONVERT(0x35202020ff09062e, UNSIGNED), 42.730704, 10.975548, '2021-04-05', NULL);
 
 INSERT INTO misurazioni (sensore, temperatura, umidita, co2, tvoc, updateId, timestamp) VALUES
 (CONVERT (0x35202020ff09062d, UNSIGNED), 25, 42, 555, 23, 169, '2021-04-05 15:16:08'),

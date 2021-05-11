@@ -1,14 +1,13 @@
 <?php
 include "conn_lib.php";
 
-$start = $_POST['start'];
-$end = $_POST['end'];
-$city = $_POST['city'];
+$snapshot = $_POST['snapshot'];
 
-$sql = "SELECT DataRequested, MSLP, DewPoint, TMax, TAVG, TMin,
-Humidity, MaxWind, AVGWind, sunny, snow, fog, rain, storm, hail
-from weather where CityId = $city and DataRequested
-between '$start' and '$end' and MSLP > 0 order by dataRequested asc;";
+$sql = "SELECT s.lat, s.lng, m.fire_index
+FROM misurazioni as m
+INNER JOIN sensori as s on m.sensore = s. arduinoId
+INNER JOIN snapshot_misurazioni as snm on m.dataId = snm.misurazione
+WHERE snm.snapshot = $snapshot;";
 
 $data = [];
 

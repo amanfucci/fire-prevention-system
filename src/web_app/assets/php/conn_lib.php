@@ -7,9 +7,9 @@ $user = "root";
 $passw = "";
 
 // Create connection
-$conn = new mysqli($hostname, $user, $passw, "meteoterranova");
+$conn = new mysqli($hostname, $user, $passw, "fire_prevention_system");
 // Check connection
 if ($conn->connect_error){
-  die (json_encode("Conneection Error: " . $conn->connect_error));
+  die (json_encode("Connection Error: " . $conn->connect_error));
 }
 ?>
