@@ -50,8 +50,8 @@ public class SerialListener {
 				
 				try {
 					new Thread(new ClientTLS(buffer, size)).start();
-				} catch (IOException e) {
-					// Manage exception
+				} catch (Exception e) {
+					e.printStackTrace(new java.io.PrintStream(System.out));// Manage exception
 				}
 
 				int i = 0;

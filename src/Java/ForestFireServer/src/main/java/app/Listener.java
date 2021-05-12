@@ -3,7 +3,6 @@ package app;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 
 /*
@@ -36,11 +35,12 @@ public class Listener {
     private static final String[] cipher_suites = new String[] { "TLS_AES_128_GCM_SHA256" };
 
     public static void main(String[] args){
-        System.setProperty("javax.net.ssl.keyStore","try1.store");
-        System.setProperty("javax.net.ssl.keyStorePassword","password");
-        System.setProperty("javax.net.ssl.trustStore","try1.store");
-        System.setProperty("javax.net.ssl.trustStorePassword","password");
-
+        System.setProperty("javax.net.ssl.keyStoreType","JKS");
+        System.setProperty("javax.net.ssl.trustStoreType","JKS");
+        System.setProperty("javax.net.ssl.keyStore", "C:/xampp/htdocs/forest-fire-prevention/src/Java/keystore.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "passphrase");
+        System.setProperty("javax.net.ssl.trustStore", "C:/xampp/htdocs/forest-fire-prevention/src/Java/truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "passphrase");
         try {
             EchoServer server = EchoServer.create(port);
             new Thread(server).start();
@@ -48,6 +48,7 @@ public class Listener {
         } catch (IOException e) {
             System.out.println(e);
         }
+        System.out.println("fin");
     }
 
     public static class EchoServer implements Runnable, AutoCloseable {

@@ -31,8 +31,4 @@ public class dataBase {
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.execute();
     }
-
-    public static void main(String[] args) throws Exception{
-
-    }
 }

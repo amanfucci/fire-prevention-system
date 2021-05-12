@@ -65,10 +65,12 @@ public class ClientTLS implements Runnable {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        System.setProperty("javax.net.ssl.keyStore", "try1.store");
-        System.setProperty("javax.net.ssl.keyStorePassword", "password");
-        System.setProperty("javax.net.ssl.trustStore", "try1.store");
-        System.setProperty("javax.net.ssl.trustStorePassword", "password");
+        System.setProperty("javax.net.ssl.keyStoreType","JKS");
+        System.setProperty("javax.net.ssl.trustStoreType","JKS");
+        System.setProperty("javax.net.ssl.keyStore", "C:/xampp/htdocs/forest-fire-prevention/src/Java/keystore.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "passphrase");
+        System.setProperty("javax.net.ssl.trustStore", "C:/xampp/htdocs/forest-fire-prevention/src/Java/truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "passphrase");
         SerialListener mainClass;
         while (true) {
 
