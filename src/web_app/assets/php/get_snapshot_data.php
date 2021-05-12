@@ -7,7 +7,8 @@ $sql = "SELECT s.lat, s.lng, m.fire_index
 FROM misurazioni as m
 INNER JOIN sensori as s on m.sensore = s. arduinoId
 INNER JOIN snapshot_misurazioni as snm on m.dataId = snm.misurazione
-WHERE snm.snapshot = $snapshot;";
+WHERE snm.snapshot = $snapshot AND s.data_inst < cast(snm.snapshot as date) AND (s.data_rim > cast(snm.snapshot as date)
+OR snm.snapshot IS NULL);";
 
 $data = [];
 
