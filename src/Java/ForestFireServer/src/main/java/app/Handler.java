@@ -68,15 +68,15 @@ public class Handler implements Runnable {
                printByte(data, i, 20);
             }
 
-            dataBase db = new dataBase("localhost", "3306", "manfu_lora", "root", "");
-            String sql = "insert into data"
-                    + "(arduinoId, temperature, humidity, CO2, tvoc, updateId, timestamp) values";
+            dataBase db = new dataBase("localhost", "3306", "fire_prevention_system", "root", "");
+            String sql = "INSERT INTO misurazioni"
+                    + "(sensore, temperatura, umidita, co2, tvoc, updateId, timestamp) VALUES";
 
             // Save to db
             for (int i = 0; i < len; i += 20) {
                 if(i!=0)
                     sql+=",";
-                sql += "(" + byteToHex(data, i, 8) + ",";
+                sql += "(CONVERT(" + byteToHex(data, i, 8) + ", UNSIGNED),";
                 sql += (int) data[i + 8] + "," + (int) data[i + 9]+",";
                 sql += byteToInt(data, i+10, 2) + "," + byteToInt(data, i+12,2) + ",";
                 sql += byteToInt(data, i+14, 2) + ",";
