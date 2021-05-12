@@ -36,7 +36,7 @@ sql = "INSERT INTO misurazioni (sensore, temperatura, umidita, co2, tvoc, update
 sql += "VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
 #data ins.
-timestamp  = d.datetime(2020, 5, 12, hour=0, minute=0, second=0)
+timestamp  = d.datetime(2021, 5, 12, hour=0, minute=0, second=0)
 for y in range(0,1):
     timestamp += d.timedelta(minutes=5)
     temperatura = np.random.choice(temperatura_set, n_nodes, p=temperatura_prob)
