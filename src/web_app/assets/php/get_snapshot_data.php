@@ -3,7 +3,8 @@ include "conn_lib.php";
 
 $snapshot = $_POST['snapshot'];
 
-$sql = "SELECT s.lat, s.lng, m.fire_index, m.temperatura, m.co2, m.tvoc
+$sql = "SELECT s.lat, s.lng, m.fire_index, m.temperatura,
+m.umidita, m.co2, m.tvoc, m.timestamp,m.dataId, s.arduinoId
 FROM misurazioni as m
 INNER JOIN sensori as s on m.sensore = s.arduinoId
 INNER JOIN snapshot_misurazioni as snm on m.dataId = snm.misurazione
