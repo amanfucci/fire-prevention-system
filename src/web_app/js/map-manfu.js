@@ -14,7 +14,7 @@ $.ajax({
     min = sel = moment(new Date(data['min'])).startOf('hour');
     max = moment(new Date(data['max'])).startOf('hour');
 
-    if(moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss").isValid())
+    if (moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss").isValid())
         sel = moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss");
 
     $('#date_picker').daterangepicker({
@@ -28,13 +28,15 @@ $.ajax({
         singleDatePicker: true,
         timePicker: true,
         timePicker24Hour: true,
-        timePickerIncrement: 1,
+        timePickerIncrement: 60,
         drops: 'down',
         parentEl: '#date_picker'
     }, (s, e) => {
         $.cookie('selected_fps', sel.format("yyyy-MM-DD HH:mm:ss").startOf('hour'), { path: '/' })
         get_snapshots(sel);
+        $('#date_picker span').html(sel.format('yyyy-MM-DD HH:mm'));
     });
+    $('#date_picker span').html(sel.format('yyyy-MM-DD HH:mm'));
     get_snapshots(sel);
 }).fail(function (data) {
     alert("01, Error fetching range");
@@ -51,6 +53,33 @@ $("#bw_snapshot").click(function () {
     if (ind - 1 < snapshots.length && ind - 1 >= 0) {
         ind--;
         get_snapshot_data(snapshots[ind]['timestamp']);
+    }
+});
+
+$("#snap_btn_collapse").click(function () {
+    $("#snap_collapse").collapse('toggle');
+});
+
+$("#sens_btn_collapse").click(function () {
+    $("#sens_collapse").collapse('toggle');
+});
+
+$(window).on('resize', function () {
+
+    if (innerWidth < 992) {
+        $(".collapse").collapse('hide');
+    }
+    if (innerWidth >= 992) {
+        $(".collapse").collapse('show');
+    }
+});
+
+$(window).on('load', function () {
+    if (innerWidth < 992) {
+        $(".collapse").collapse('hide');
+    }
+    if (innerWidth >= 992) {
+        $(".collapse").collapse('show');
     }
 });
 
@@ -116,21 +145,36 @@ function set_map(data) {
                     radiusMaxPixels: 40,
                     getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
                     getRadius: d => 30,
-                    onHover: (info, event) => console.log('Hovered:', info, event),
-                    onClick: (info, event) => console.log('Clicked:', info, event)
+                    onClick: (info, event) => {
+                        o = info.object;
+                        temp = "Node: " +o.arduinoId;
+                        $('#sens-panel-header').html(temp);
+                        temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
+                        temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
+                        temp += "<p><b>Lng: </b>" + o.lng + " E</p>";
+                        temp += "<p><b>Fire Index: </b>" + o.fire_index + "/5</p>";
+                        temp += "<p><b>Temperatura: </b>" + o.temperatura + " °C</p>";
+                        temp += "<p><b>Umidità: </b>" + o.umidita + " %</p>";
+                        temp += "<p><b>CO2: </b>" + o.co2 + " ppm</p>";
+                        temp += "<p><b>tVOC: </b>" + o.tvoc + " ppb</p>";
+                        $('#sens-panel-body').html(temp);
+                        temp = o.timestamp;
+                        $('#sens-panel-footer').html(temp);
+                    }
 
                 })
             ],
             getTooltip: function (d) {
                 o = d.object;
-                return o && {
-                    html: `<div class="card bg-light">
-                    <div class="card-header text-center"><b>${o.arduinoId}_${o.dataId}</b></div>
+                if ($('#check_window').css('display') == 'block')
+                    return o && {
+                        html: `<div class="card">
+                    <div class="card-header text-center">Node: ${o.arduinoId}</div>
                     <div class="card-body">
-                    <br>
+                    <p><b>Data Id:</b> ${o.dataId} N</p>
                     <p><b>Lat:</b> ${o.lat} N</p>
                     <p><b>Lng:</b> ${o.lng} E</p>
-                    <p><b>Fire Index:</b> ${o.fire_index} / 5</p>
+                    <p><b>Fire Index:</b> ${o.fire_index}/5</p>
                     <p><b>Temperatura:</b> ${o.temperatura} °C</p>
                     <p><b>Umidità:</b> ${o.umidita} %</p>
                     <p><b>CO2:</b> ${o.co2} ppm</p>
@@ -138,12 +182,12 @@ function set_map(data) {
                     </div>
                     <div class="card-footer text-center">${o.timestamp}</div>`
 
-                    ,
-                    className: "bg-transparent",
-                    style: {
-                        "line-height": "8px"
-                    }
-                };
+                        ,
+                        className: "bg-transparent",
+                        style: {
+                            "line-height": "8px"
+                        }
+                    };
             }
         });
     }
@@ -173,8 +217,22 @@ function set_map(data) {
                     radiusMaxPixels: 40,
                     getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
                     getRadius: d => 30,
-                    onHover: (info, event) => console.log('Hovered:', info, event),
-                    onClick: (info, event) => console.log('Clicked:', info, event)
+                    onClick: (info, event) => {
+                        o = info.object;
+                        temp = "Node: " +o.arduinoId;
+                        $('#sens-panel-header').html(temp);
+                        temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
+                        temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
+                        temp += "<p><b>Lng: </b>" + o.lng + " E</p>";
+                        temp += "<p><b>Fire Index: </b>" + o.fire_index + "/5</p>";
+                        temp += "<p><b>Temperatura: </b>" + o.temperatura + " °C</p>";
+                        temp += "<p><b>Umidità: </b>" + o.umidita + " %</p>";
+                        temp += "<p><b>CO2: </b>" + o.co2 + " ppm</p>";
+                        temp += "<p><b>tVOC: </b>" + o.tvoc + " ppb</p>";
+                        $('#sens-panel-body').html(temp);
+                        temp = o.timestamp;
+                        $('#sens-panel-footer').html(temp);
+                    }
 
                 })
             ]

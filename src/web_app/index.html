@@ -37,7 +37,7 @@
 
 	<div id="topnav-container">
 	</div>
-
+	<div id="check_window" class="d-none d-md-block"></div>
 	<div id="layoutSidenav">
 
 		<div id="sidenav-container">
@@ -46,55 +46,94 @@
 			<main id="app" style="height: 100vh;">
 			</main>
 			<div class="panel-home-md">
-				<div class="card card-progress mt-4 d-none d-md-block" id="app-panel">
+				<div class="card card-progress mt-4 card-collapsable" id="app-panel">
 
-					<div class="card-header" id="app-panel-header">Snapshot: NO DATA</div>
-					<div class="card-body" id="app-panel-body"></div>
-					<div class="card-footer text-body container-fluid" id="app-panel-footer">
-						Fire Index:
-						<div class="row mt-2" style="height: 5px">
-							<div class="col-2 bg-green">
-							</div>
-							<div class="col-2 bg-yellow">
-							</div>
-							<div class="col-2 bg-orange">
-							</div>
-							<div class="col-2 bg-red">
-							</div>
-							<div class="col-2 bg-pink">
-							</div>
-							<div class="col-2 bg-purple">
-							</div>
+					<a class="card-header" href="#" data-toggle="collapse" role="button" id="snap_btn_collapse">
+						<div id="app-panel-header"></div>
+						<div class="card-collapsable-arrow">
+							<i class="fas fa-chevron-down"></i>
 						</div>
-						<div class="row pt-2 text-center">
-							<div class="col-2">0
+					</a>
+					<div class="collapse show" id="snap_collapse">
+						<div class="card-body" id="app-panel-body"></div>
+						<div class="card-footer text-body container-fluid" id="app-panel-footer">
+							Fire Index:
+							<div class="row mt-2" style="height: 5px">
+								<div class="col-2 bg-green">
+								</div>
+								<div class="col-2 bg-yellow">
+								</div>
+								<div class="col-2 bg-orange">
+								</div>
+								<div class="col-2 bg-red">
+								</div>
+								<div class="col-2 bg-pink">
+								</div>
+								<div class="col-2 bg-purple">
+								</div>
 							</div>
-							<div class="col-2">1
-							</div>
-							<div class="col-2">2
-							</div>
-							<div class="col-2">3
-							</div>
-							<div class="col-2">4
-							</div>
-							<div class="col-2">5
+							<div class="row pt-2 text-center">
+								<div class="col-2">0
+								</div>
+								<div class="col-2">1
+								</div>
+								<div class="col-2">2
+								</div>
+								<div class="col-2">3
+								</div>
+								<div class="col-2">4
+								</div>
+								<div class="col-2">5
+								</div>
 							</div>
 						</div>
 					</div>
 
 				</div>
-				<div class="card mt-1 d-none d-md-block">
+				<div class="card card-progress mt-1 card-collapsable">
+
+					<a class="card-header" href="#" data-toggle="collapse" role="button" id="sens_btn_collapse">
+						<div id="sens-panel-header">Node: --choose one--</div>
+						<div class="card-collapsable-arrow">
+							<i class="fas fa-chevron-down"></i>
+						</div>
+					</a>
+					<div class="collapse show" id="sens_collapse">
+						<div class="card-body" id="sens-panel-body">
+							<p><b>Data Id: </b></p>
+							<p><b>Lat: </b> N</p>
+							<p><b>Lng: </b> E</p>
+							<p><b>Fire Index: </b>/5</p>
+							<p><b>Temperatura: </b> °C</p>
+							<p><b>Umidità: </b> %</p>
+							<p><b>CO2: </b> ppm</p>
+							<p><b>tVOC: </b> ppb</p>
+						</div>
+						<div class="card-footer text-body container-fluid" id="sens-panel-footer">
+						</div>
+					</div>
+
+				</div>
+				<div class="card mt-1">
 					<div class="card-body">
-						<!-- Large date selector -->
+						<!-- Large date selector
 						<button type='button' class='btn btn-white' id='date_picker'>
 							<i class='bi bi-calendar2-fill icon-blue-custom icon-h6'></i>
-						</button>
-						<button class="btn btn-light btn-icon ml-10" type="button" id="bw_snapshot">
-							<i class="bi bi-chevron-left icon-h5" aria-hidden="true"></i>
-						</button>
-						<button class="btn btn-light btn-icon" type="button" id="fw_snapshot">
-							<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
-						</button>
+						</button> -->
+						<div class='input-group input-group-solid bg-white'>
+							<button type='button' class='btn btn-white p-3' id='date_picker'> <i
+									class='bi bi-calendar2-fill icon-blue-custom' aria-hidden='true'></i>&ensp;
+								<span class='text'></span>
+							</button>
+							<button class="btn btn-light btn-icon" type="button" id="bw_snapshot">
+								<i class="bi bi-chevron-left icon-h5" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-light btn-icon" type="button" id="fw_snapshot">
+								<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
+							</button>
+						</div>
+
+
 					</div>
 				</div>
 			</div>
@@ -114,8 +153,8 @@
 	<script src="assets/handlebars/handlebars.min-v4.7.6.js"></script>
 	<script src="assets/handlebars/page_layout.js"></script>
 	<!--Theme js-->
-	<script defer src="assets/theme/js/bootstrap.bundle.min.js"></script>
-	<script defer src="assets/theme/js/scripts.js"></script>
+	<script src="assets/theme/js/bootstrap.bundle.min.js"></script>
+	<script src="assets/theme/js/scripts.js"></script>
 	<!--deck.gl-->
 	<script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
 	<script src="https://unpkg.com/@deck.gl/carto@^8.2.0/dist.min.js"></script>
