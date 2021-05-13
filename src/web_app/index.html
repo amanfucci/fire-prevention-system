@@ -45,9 +45,62 @@
 		<div id="layoutSidenav_content">
 			<main id="app" style="height: 100vh;">
 			</main>
-			
-			<div id="footer-container"></div>
+			<div class="panel-home-md">
+				<div class="card card-progress mt-4 d-none d-md-block" id="app-panel">
+
+					<div class="card-header" id="app-panel-header">Snapshot: NO DATA</div>
+					<div class="card-body" id="app-panel-body"></div>
+					<div class="card-footer text-body container-fluid" id="app-panel-footer">
+						Fire Index:
+						<div class="row mt-2" style="height: 5px">
+							<div class="col-2 bg-green">
+							</div>
+							<div class="col-2 bg-yellow">
+							</div>
+							<div class="col-2 bg-orange">
+							</div>
+							<div class="col-2 bg-red">
+							</div>
+							<div class="col-2 bg-pink">
+							</div>
+							<div class="col-2 bg-purple">
+							</div>
+						</div>
+						<div class="row pt-2 text-center">
+							<div class="col-2">0
+							</div>
+							<div class="col-2">1
+							</div>
+							<div class="col-2">2
+							</div>
+							<div class="col-2">3
+							</div>
+							<div class="col-2">4
+							</div>
+							<div class="col-2">5
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="card mt-1 d-none d-md-block">
+					<div class="card-body">
+						<!-- Large date selector -->
+						<button type='button' class='btn btn-white' id='date_picker'>
+							<i class='bi bi-calendar2-fill icon-blue-custom icon-h6'></i>
+						</button>
+						<button class="btn btn-light btn-icon ml-10" type="button" id="bw_snapshot">
+							<i class="bi bi-chevron-left icon-h5" aria-hidden="true"></i>
+						</button>
+						<button class="btn btn-light btn-icon" type="button" id="fw_snapshot">
+							<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
+		<div id="footer-container" class="fot-home"></div>
+	</div>
 
 	</div>
 

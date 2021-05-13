@@ -1,18 +1,89 @@
-(function ($) {
+col = [[0, 172, 105], [244, 161, 0], [247, 100, 0], [232, 21, 0], [227, 0, 89], [105, 0, 99]];
+var my_map = undefined;
+var min, max, sel, ind, snapshots;
+$.ajaxSetup({ cache: false });
 
-    $.ajaxSetup({ cache: false });
+//Get range
+$.ajax({
+    url: "assets/php/get_snapshot_range.php",
+    type: "get"
+}).done(function (data) {
+    //On request received
+    data = JSON.parse(data);
+    console.log(data);
+    min = sel = moment(new Date(data['min'])).startOf('hour');
+    max = moment(new Date(data['max'])).startOf('hour');
 
-    var snapshot_data = {};
+    if(moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss").isValid())
+        sel = moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss");
 
-    function set_map(data) {
-        col = [[100, 168, 142], [244, 161, 0], [247, 100, 0], [232, 21, 0], [227, 0, 89], [105, 0, 99]];
-        const deckgl = new deck.DeckGL({
+    $('#date_picker').daterangepicker({
+        opens: 'right',
+        autoApply: true,
+        minDate: min,
+        maxDate: max,
+        startDate: sel,
+        linkedCalendars: false,
+        alwaysShowCalendars: true,
+        singleDatePicker: true,
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 1,
+        drops: 'down',
+        parentEl: '#date_picker'
+    }, (s, e) => {
+        $.cookie('selected_fps', sel.format("yyyy-MM-DD HH:mm:ss").startOf('hour'), { path: '/' })
+        get_snapshots(sel);
+    });
+    get_snapshots(sel);
+}).fail(function (data) {
+    alert("01, Error fetching range");
+});
+
+$("#fw_snapshot").click(function () {
+    if (ind + 1 < snapshots.length && ind + 1 >= 0) {
+        ind++;
+        get_snapshot_data(snapshots[ind]['timestamp']);
+    }
+});
+
+$("#bw_snapshot").click(function () {
+    if (ind - 1 < snapshots.length && ind - 1 >= 0) {
+        ind--;
+        get_snapshot_data(snapshots[ind]['timestamp']);
+    }
+});
+
+//----
+function get_snapshots(s) {
+    //Get snapshots within range
+    console.log(s.format("yyyy-MM-DD HH:mm:ss"));
+    $.ajax({
+        url: "assets/php/get_snapshot.php",
+        type: "post",
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+        data: "&date='" + s.format("yyyy-MM-DD HH:mm:ss") + "'"
+
+    }).done(function (data) {
+        //On request received
+        snapshots = JSON.parse(data);
+        ind = 0;
+        get_snapshot_data(snapshots[ind]['timestamp']);
+
+    }).fail(function (data) {
+        alert("02, Error fetching snapshots in range");
+    });
+}
+
+function set_map(data) {
+    if (my_map === undefined) {
+        my_map = new deck.DeckGL({
             container: 'app',
             mapStyle: deck.carto.BASEMAP.POSITRON,
             mapboxApiAccessToken: 'pk.eyJ1IjoibWFuZnUiLCJhIjoiY2tvazlxcmF0MDI0bzJ2cWxuOGV5dWU3dSJ9.AW6J2eFyh_79OQ6jl7LqFA',
             initialViewState: {
-                latitude: 42.730058,
-                longitude: 10.974754,
+                latitude: 42.72437670342,
+                longitude: 10.98787813097,
                 zoom: 14,
                 minZoom: 14,
                 maxZoom: 17,
@@ -45,15 +116,16 @@
                     radiusMaxPixels: 40,
                     getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
                     getRadius: d => 30,
+                    onHover: (info, event) => console.log('Hovered:', info, event),
+                    onClick: (info, event) => console.log('Clicked:', info, event)
 
                 })
             ],
             getTooltip: function (d) {
                 o = d.object;
-                console.log(d);
                 return o && {
                     html: `<div class="card bg-light">
-                    <div class="card-header text-center text-primary"><b>${o.arduinoId}_${o.dataId}</b></div>
+                    <div class="card-header text-center"><b>${o.arduinoId}_${o.dataId}</b></div>
                     <div class="card-body">
                     <br>
                     <p><b>Lat:</b> ${o.lat} N</p>
@@ -65,8 +137,8 @@
                     <p><b>tVOC:</b> ${o.tvoc} ppb</p>
                     </div>
                     <div class="card-footer text-center">${o.timestamp}</div>`
-                   
-                ,
+
+                    ,
                     className: "bg-transparent",
                     style: {
                         "line-height": "8px"
@@ -75,25 +147,73 @@
             }
         });
     }
+    else {
+        my_map.setProps({
+            layers: [
+                new deck.HeatmapLayer({
+                    id: 'heat-map',
+                    data: data,
+                    opacity: 0.3,
+                    getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
+                    getWeight: d => 1.9 ** d.fire_index,
+                    maxWeight: 1.9 ** 5,
+                    threshold: 0.02,
+                    radiusPixels: 40,
+                    colorRange: col,
+                    aggregation: 'MEAN'
+                }),
+                new deck.ScatterplotLayer({
+                    id: 'scatterplot-layer',
+                    data: data,
+                    pickable: true,
+                    opacity: 0,
+                    filled: true,
+                    radiusScale: 1,
+                    radiusMinPixels: 40,
+                    radiusMaxPixels: 40,
+                    getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
+                    getRadius: d => 30,
+                    onHover: (info, event) => console.log('Hovered:', info, event),
+                    onClick: (info, event) => console.log('Clicked:', info, event)
 
-    function get_snapshot_data(snapshot) {
-        $.ajax({
-            url: "assets/php/get_snapshot_data.php",
-            type: "post",
-            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-            data: "snapshot='" + snapshot + "'"
-
-        }).done(function (data) {
-            //On request received
-            data = JSON.parse(data);
-            //console.log(data);
-            snapshot_data[snapshot] = data;
-            set_map(data);
-        }).fail(function (data) {
-            alert("01, Error fetching snapshot data");
+                })
+            ]
         });
-
     }
-    get_snapshot_data('2021-05-12 00:10:00');
+}
 
-})(jQuery);
+function set_panel(snapshot, data, err) {
+
+    if (!err) {
+        avg_fire_index = data.reduce((x, y) => x + y.fire_index, 0) / data.length;
+        avg_fire_index = avg_fire_index.toFixed(1);
+        $("#app-panel-header").html("Snapshot: " + snapshot);
+        panel_body = "<p><b>Sensors: </b>" + data.length + "</p>";
+        panel_body += "<p><b>Max. Fire Index: </b>" + data.reduce((x, y) => y.fire_index > x ? x = y.fire_index : x, 0) + "/5 </p>";
+        panel_body += "<p><b>Avg. Fire Index: </b>" + avg_fire_index + "/5 </p>";
+        panel_body += '<div class="progress rounded-0"><div class="progress-bar" role="progressbar" style="width: 0%; height:5px" id="avg-fi-bar"></div></div>';
+        $("#app-panel-body").html(panel_body);
+        $("#avg-fi-bar").css("width", (avg_fire_index * 100 / 5) + "%");
+        my_col = col[Math.round(avg_fire_index)];
+        $("#avg-fi-bar").css("background-color", "rgb(" + my_col[0] + "," + my_col[1] + "," + my_col[2] + ")");
+    }
+
+}
+
+function get_snapshot_data(snapshot) {
+    $.ajax({
+        url: "assets/php/get_snapshot_data.php",
+        type: "post",
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+        data: "&snapshot='" + snapshot + "'"
+
+    }).done(function (data) {
+        //On request received
+        data = JSON.parse(data);
+        //console.log(data);
+        set_panel(snapshot, data, false);
+        set_map(data);
+    }).fail(function (data) {
+        alert("03, Error fetching snapshot data");
+    });
+}

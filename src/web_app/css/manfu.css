@@ -5,6 +5,16 @@
 	width: 100%;
 }
 
+.fot-home{
+	position:fixed;
+}
+
+.panel-home-md{
+	position: fixed;
+	right:2vh;
+	line-height: 8px;
+}
+
 .carousel-item {
 	height: 100%;
 	min-height: 80vh;
