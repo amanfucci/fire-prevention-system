@@ -46,16 +46,20 @@
 			<main id="app" style="height: 100vh;">
 			</main>
 			<div class="panel-home-md">
-				<div class="card card-progress mt-4 card-collapsable" id="app-panel">
+				<div class="card card-progress mt-3 card-collapsable" id="app-panel">
 
 					<a class="card-header" href="#" data-toggle="collapse" role="button" id="snap_btn_collapse">
-						<div id="app-panel-header"></div>
-						<div class="card-collapsable-arrow">
+						<div id="app-panel-header">Select a Snapshot</div>
+						<div class="card-collapsable-arrow pl-2">
 							<i class="fas fa-chevron-down"></i>
 						</div>
 					</a>
 					<div class="collapse show" id="snap_collapse">
-						<div class="card-body" id="app-panel-body"></div>
+						<div class="card-body" id="app-panel-body">
+							<p><b>Nodes:</b></p>
+							<p><b>Max Fire Index: </b>/5</p>
+							<p><b>Avg Fire Index: </b>/5</p>
+						</div>
 						<div class="card-footer text-body container-fluid" id="app-panel-footer">
 							Fire Index:
 							<div class="row mt-2" style="height: 5px">
@@ -93,8 +97,8 @@
 				<div class="card card-progress mt-1 card-collapsable">
 
 					<a class="card-header" href="#" data-toggle="collapse" role="button" id="sens_btn_collapse">
-						<div id="sens-panel-header">Node: --choose one--</div>
-						<div class="card-collapsable-arrow">
+						<div id="sens-panel-header">Select a Node</div>
+						<div class="card-collapsable-arrow pl-2">
 							<i class="fas fa-chevron-down"></i>
 						</div>
 					</a>
@@ -109,26 +113,23 @@
 							<p><b>CO2: </b> ppm</p>
 							<p><b>tVOC: </b> ppb</p>
 						</div>
-						<div class="card-footer text-body container-fluid" id="sens-panel-footer">
+						<div class="card-footer text-body container-fluid text-center" id="sens-panel-footer">
+						0000-00-00 00:00:00
 						</div>
 					</div>
 
 				</div>
 				<div class="card mt-1">
-					<div class="card-body">
-						<!-- Large date selector
-						<button type='button' class='btn btn-white' id='date_picker'>
-							<i class='bi bi-calendar2-fill icon-blue-custom icon-h6'></i>
-						</button> -->
+					<div class="card-body p-1">
 						<div class='input-group input-group-solid bg-white'>
-							<button type='button' class='btn btn-white p-3' id='date_picker'> <i
+							<button type='button' class='btn btn-white pr-1' id='date_picker'> <i
 									class='bi bi-calendar2-fill icon-blue-custom' aria-hidden='true'></i>&ensp;
 								<span class='text'></span>
 							</button>
-							<button class="btn btn-light btn-icon" type="button" id="bw_snapshot">
+							<button class="btn btn-light btn-icon p-0 m-0" type="button" id="bw_snapshot">
 								<i class="bi bi-chevron-left icon-h5" aria-hidden="true"></i>
 							</button>
-							<button class="btn btn-light btn-icon" type="button" id="fw_snapshot">
+							<button class="btn btn-light btn-icon p-0 m-0" type="button" id="fw_snapshot">
 								<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
 							</button>
 						</div>

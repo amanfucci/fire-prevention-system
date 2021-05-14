@@ -1205,6 +1205,6 @@ INSERT INTO sensori (arduinoId, lat, lng, data_inst, data_rim) VALUES
 
 INSERT INTO misurazioni (dataId, sensore, temperatura, umidita, co2, tvoc, updateId, timestamp) VALUES
 (1,CONVERT (0x35202020ff09062d, UNSIGNED), 25, 42, 555, 23, 169, '2021-04-05 15:16:08'),
-(2,CONVERT (0x35202020ff09062e, UNSIGNED), 25, 42, 555, 23, 169, '2021-04-05 15:16:08'),
+(2,CONVERT (0x35202020ff09062e, UNSIGNED), 25, 42, 555, 23, 169, '2021-04-05 15:16:08');
 
-ALTER TABLE misurazioni AUTO_INCREMENT = 1243;
+ALTER TABLE misurazioni AUTO_INCREMENT = 3;

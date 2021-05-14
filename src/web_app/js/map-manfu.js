@@ -147,7 +147,7 @@ function set_map(data) {
                     getRadius: d => 30,
                     onClick: (info, event) => {
                         o = info.object;
-                        temp = "Node: " +o.arduinoId;
+                        temp = "" + o.arduinoId;
                         $('#sens-panel-header').html(temp);
                         temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
                         temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
@@ -219,7 +219,7 @@ function set_map(data) {
                     getRadius: d => 30,
                     onClick: (info, event) => {
                         o = info.object;
-                        temp = "Node: " +o.arduinoId;
+                        temp = "Node: " + o.arduinoId;
                         $('#sens-panel-header').html(temp);
                         temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
                         temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
@@ -245,8 +245,8 @@ function set_panel(snapshot, data, err) {
     if (!err) {
         avg_fire_index = data.reduce((x, y) => x + y.fire_index, 0) / data.length;
         avg_fire_index = avg_fire_index.toFixed(1);
-        $("#app-panel-header").html("Snapshot: " + snapshot);
-        panel_body = "<p><b>Sensors: </b>" + data.length + "</p>";
+        $("#app-panel-header").html("" + snapshot);
+        panel_body = "<p><b>Nodes: </b>" + data.length + "</p>";
         panel_body += "<p><b>Max. Fire Index: </b>" + data.reduce((x, y) => y.fire_index > x ? x = y.fire_index : x, 0) + "/5 </p>";
         panel_body += "<p><b>Avg. Fire Index: </b>" + avg_fire_index + "/5 </p>";
         panel_body += '<div class="progress rounded-0"><div class="progress-bar" role="progressbar" style="width: 0%; height:5px" id="avg-fi-bar"></div></div>';
@@ -259,6 +259,19 @@ function set_panel(snapshot, data, err) {
 }
 
 function get_snapshot_data(snapshot) {
+    temp = "Select a Node";
+    $('#sens-panel-header').html(temp);
+    temp = "<p><b>Data Id: </b></p>"
+    temp += "<p><b>Lat: </b> N</p>"
+    temp += "<p><b>Lng: </b> E</p>"
+    temp += "<p><b>Fire Index: </b>/5</p>"
+    temp += "<p><b>Temperatura: </b> °C</p>"
+    temp += "<p><b>Umidità: </b> %</p>"
+    temp += "<p><b>CO2: </b> ppm</p>"
+    temp += "<p><b>tVOC: </b> ppb</p>"
+    $('#sens-panel-body').html(temp);
+    temp = "0000-00-00 00:00:00";
+    $('#sens-panel-footer').html(temp);
     $.ajax({
         url: "assets/php/get_snapshot_data.php",
         type: "post",
@@ -268,7 +281,7 @@ function get_snapshot_data(snapshot) {
     }).done(function (data) {
         //On request received
         data = JSON.parse(data);
-        //console.log(data);
+        console.log(data);
         set_panel(snapshot, data, false);
         set_map(data);
     }).fail(function (data) {
