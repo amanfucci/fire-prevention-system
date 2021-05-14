@@ -2,7 +2,7 @@ col = [[0, 172, 105], [244, 161, 0], [247, 100, 0], [232, 21, 0], [227, 0, 89], 
 var my_map = undefined;
 var min, max, sel, ind, snapshots;
 $.ajaxSetup({ cache: false });
-
+set_map([]);
 //Get range
 $.ajax({
     url: "assets/php/get_snapshot_range.php",
@@ -32,7 +32,9 @@ $.ajax({
         drops: 'down',
         parentEl: '#date_picker'
     }, (s, e) => {
-        $.cookie('selected_fps', sel.format("yyyy-MM-DD HH:mm:ss").startOf('hour'), { path: '/' })
+        sel = s;
+        console.log("Date picked: " + sel.format("yyyy-MM-DD HH:mm:ss"));
+        $.cookie('selected_fps', sel.startOf('hour').format("yyyy-MM-DD HH:mm:ss"), { path: '/' })
         get_snapshots(sel);
         $('#date_picker span').html(sel.format('yyyy-MM-DD HH:mm'));
     });
@@ -70,16 +72,13 @@ $(window).on('resize', function () {
         $(".collapse").collapse('hide');
     }
     if (innerWidth >= 992) {
-        $(".collapse").collapse('show');
+        $("#snap_collapse").collapse('show');
     }
 });
 
 $(window).on('load', function () {
     if (innerWidth < 992) {
         $(".collapse").collapse('hide');
-    }
-    if (innerWidth >= 992) {
-        $(".collapse").collapse('show');
     }
 });
 
@@ -96,9 +95,15 @@ function get_snapshots(s) {
     }).done(function (data) {
         //On request received
         snapshots = JSON.parse(data);
-        ind = 0;
-        get_snapshot_data(snapshots[ind]['timestamp']);
-
+        console.log(snapshots);
+        if (snapshots.length > 0) {
+            ind = 0;
+            get_snapshot_data(snapshots[ind]['timestamp']);
+            $('#date_picker').tooltip('hide');
+        }
+        else {
+            $('#date_picker').tooltip('show');
+        }
     }).fail(function (data) {
         alert("02, Error fetching snapshots in range");
     });
@@ -281,7 +286,7 @@ function get_snapshot_data(snapshot) {
     }).done(function (data) {
         //On request received
         data = JSON.parse(data);
-        console.log(data);
+        console.log("done: " + data.length);
         set_panel(snapshot, data, false);
         set_map(data);
     }).fail(function (data) {

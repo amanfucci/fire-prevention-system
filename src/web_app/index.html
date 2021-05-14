@@ -102,7 +102,7 @@
 							<i class="fas fa-chevron-down"></i>
 						</div>
 					</a>
-					<div class="collapse show" id="sens_collapse">
+					<div class="collapse" id="sens_collapse">
 						<div class="card-body" id="sens-panel-body">
 							<p><b>Data Id: </b></p>
 							<p><b>Lat: </b> N</p>
@@ -114,7 +114,7 @@
 							<p><b>tVOC: </b> ppb</p>
 						</div>
 						<div class="card-footer text-body container-fluid text-center" id="sens-panel-footer">
-						0000-00-00 00:00:00
+							0000-00-00 00:00:00
 						</div>
 					</div>
 
@@ -122,8 +122,9 @@
 				<div class="card mt-1">
 					<div class="card-body p-1">
 						<div class='input-group input-group-solid bg-white'>
-							<button type='button' class='btn btn-white pr-1' id='date_picker'> <i
-									class='bi bi-calendar2-fill icon-blue-custom' aria-hidden='true'></i>&ensp;
+							<button type='button' class='btn btn-white pr-1' id='date_picker' data-toggle="tooltip"
+								data-placement="left" data-trigger="manual" data-original-title="No snapshots here">
+								<i class='bi bi-calendar2-fill icon-blue-custom' aria-hidden='true'></i>&ensp;
 								<span class='text'></span>
 							</button>
 							<button class="btn btn-light btn-icon p-0 m-0" type="button" id="bw_snapshot">
