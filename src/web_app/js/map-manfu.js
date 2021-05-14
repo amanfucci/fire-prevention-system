@@ -110,6 +110,49 @@ function get_snapshots(s) {
 }
 
 function set_map(data) {
+    console.log(data);
+    my_layers = [
+        new deck.HeatmapLayer({
+            id: 'heat-map',
+            data: data,
+            opacity: 0.3,
+            intensity: 1,
+            getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
+            getWeight: d => 1.9**d.fire_index,
+            radiusPixels: 30,
+            colorRange: col,
+            aggregation: 'MEAN'
+        }),
+        new deck.ScatterplotLayer({
+            id: 'scatterplot-layer',
+            data: data,
+            pickable: true,
+            opacity: 0,
+            filled: true,
+            radiusScale: 1,
+            radiusMinPixels: 30,
+            radiusMaxPixels: 30,
+            getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
+            getRadius: d => 30,
+            onClick: (info, event) => {
+                o = info.object;
+                temp = "" + o.arduinoId;
+                $('#sens-panel-header').html(temp);
+                temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
+                temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
+                temp += "<p><b>Lng: </b>" + o.lng + " E</p>";
+                temp += "<p><b>Fire Index: </b>" + o.fire_index + "/5</p>";
+                temp += "<p><b>Temperatura: </b>" + o.temperatura + " °C</p>";
+                temp += "<p><b>Umidità: </b>" + o.umidita + " %</p>";
+                temp += "<p><b>CO2: </b>" + o.co2 + " ppm</p>";
+                temp += "<p><b>tVOC: </b>" + o.tvoc + " ppb</p>";
+                $('#sens-panel-body').html(temp);
+                temp = o.timestamp;
+                $('#sens-panel-footer').html(temp);
+            }
+
+        })
+    ];
     if (my_map === undefined) {
         my_map = new deck.DeckGL({
             container: 'app',
@@ -126,55 +169,13 @@ function set_map(data) {
             },
             controller: true,
             pickable: true,
-            layers: [
-                new deck.HeatmapLayer({
-                    id: 'heat-map',
-                    data: data,
-                    opacity: 0.3,
-                    getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
-                    getWeight: d => 1.9 ** d.fire_index,
-                    maxWeight: 1.9 ** 5,
-                    threshold: 0.02,
-                    radiusPixels: 40,
-                    colorRange: col,
-                    aggregation: 'MEAN'
-                }),
-                new deck.ScatterplotLayer({
-                    id: 'scatterplot-layer',
-                    data: data,
-                    pickable: true,
-                    opacity: 0,
-                    filled: true,
-                    radiusScale: 1,
-                    radiusMinPixels: 40,
-                    radiusMaxPixels: 40,
-                    getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
-                    getRadius: d => 30,
-                    onClick: (info, event) => {
-                        o = info.object;
-                        temp = "" + o.arduinoId;
-                        $('#sens-panel-header').html(temp);
-                        temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
-                        temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
-                        temp += "<p><b>Lng: </b>" + o.lng + " E</p>";
-                        temp += "<p><b>Fire Index: </b>" + o.fire_index + "/5</p>";
-                        temp += "<p><b>Temperatura: </b>" + o.temperatura + " °C</p>";
-                        temp += "<p><b>Umidità: </b>" + o.umidita + " %</p>";
-                        temp += "<p><b>CO2: </b>" + o.co2 + " ppm</p>";
-                        temp += "<p><b>tVOC: </b>" + o.tvoc + " ppb</p>";
-                        $('#sens-panel-body').html(temp);
-                        temp = o.timestamp;
-                        $('#sens-panel-footer').html(temp);
-                    }
-
-                })
-            ],
+            layers: my_layers,
             getTooltip: function (d) {
                 o = d.object;
                 if ($('#check_window').css('display') == 'block')
                     return o && {
                         html: `<div class="card">
-                    <div class="card-header text-center">Node: ${o.arduinoId}</div>
+                    <div class="card-header text-center">${o.arduinoId}</div>
                     <div class="card-body">
                     <p><b>Data Id:</b> ${o.dataId} N</p>
                     <p><b>Lat:</b> ${o.lat} N</p>
@@ -198,49 +199,7 @@ function set_map(data) {
     }
     else {
         my_map.setProps({
-            layers: [
-                new deck.HeatmapLayer({
-                    id: 'heat-map',
-                    data: data,
-                    opacity: 0.3,
-                    getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
-                    getWeight: d => 1.9 ** d.fire_index,
-                    maxWeight: 1.9 ** 5,
-                    threshold: 0.02,
-                    radiusPixels: 40,
-                    colorRange: col,
-                    aggregation: 'MEAN'
-                }),
-                new deck.ScatterplotLayer({
-                    id: 'scatterplot-layer',
-                    data: data,
-                    pickable: true,
-                    opacity: 0,
-                    filled: true,
-                    radiusScale: 1,
-                    radiusMinPixels: 40,
-                    radiusMaxPixels: 40,
-                    getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
-                    getRadius: d => 30,
-                    onClick: (info, event) => {
-                        o = info.object;
-                        temp = "Node: " + o.arduinoId;
-                        $('#sens-panel-header').html(temp);
-                        temp = "<p><b>Data Id: </b>" + o.dataId + "</p>";
-                        temp += "<p><b>Lat: </b>" + o.lat + " N</p>";
-                        temp += "<p><b>Lng: </b>" + o.lng + " E</p>";
-                        temp += "<p><b>Fire Index: </b>" + o.fire_index + "/5</p>";
-                        temp += "<p><b>Temperatura: </b>" + o.temperatura + " °C</p>";
-                        temp += "<p><b>Umidità: </b>" + o.umidita + " %</p>";
-                        temp += "<p><b>CO2: </b>" + o.co2 + " ppm</p>";
-                        temp += "<p><b>tVOC: </b>" + o.tvoc + " ppb</p>";
-                        $('#sens-panel-body').html(temp);
-                        temp = o.timestamp;
-                        $('#sens-panel-footer').html(temp);
-                    }
-
-                })
-            ]
+            layers: my_layers
         });
     }
 }

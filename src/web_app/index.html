@@ -4,7 +4,7 @@
 		* Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
 		*/-->
 <!DOCTYPE html>
-<html lang="it" class="fontawesome-i2svg-active fontawesome-i2svg-complete">
+<html lang="en">
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -12,7 +12,7 @@
 	<meta http-equiv="X-UA-Compatible">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="WebApp per il controllo degli incendi nella pineta di Grosseto">
-	<meta name="author" content="TerraNova, KBM">
+	<meta name="author" content="MANFU">
 	<title>Home - FPS</title>
 	<link rel="icon" type="image/x-icon" href="img/pc_icon.png">
 
@@ -25,6 +25,7 @@
 	<script src="assets/theme/js/all.min.js.download"></script>
 	<script src="assets/theme/js/feather.min.js.download"></script>
 	<link href="assets/theme/css/chart.css" rel="stylesheet">
+	<link href="assets/deck.gl/mapbox-gl.css" rel="stylesheet"/>
 	<!-- Bootstrap Icons -->
 	<link rel="stylesheet" href="assets/theme/css/bootstrap-icons.css">
 	<!--MANFU css -->
@@ -34,20 +35,26 @@
 </head>
 
 <body class="nav-fixed" data-new-gr-c-s-check-loaded="14.998.0" data-gr-ext-installed="" id="myBody">
-
+	<!--Topnav-->
 	<div id="topnav-container">
 	</div>
+
 	<div id="check_window" class="d-none d-md-block"></div>
 	<div id="layoutSidenav">
 
+		<!--Sidenav-->
 		<div id="sidenav-container">
 		</div>
+
 		<div id="layoutSidenav_content">
+			<!--Map-->
 			<main id="app" style="height: 100vh;">
 			</main>
-			<div class="panel-home-md">
-				<div class="card card-progress mt-3 card-collapsable" id="app-panel">
 
+			<!--Fixed panel-->
+			<div class="panel-home-md">
+				<!--Snapshot card-->
+				<div class="card card-progress mt-3 card-collapsable" id="app-panel">
 					<a class="card-header" href="#" data-toggle="collapse" role="button" id="snap_btn_collapse">
 						<div id="app-panel-header">Select a Snapshot</div>
 						<div class="card-collapsable-arrow pl-2">
@@ -71,7 +78,7 @@
 								</div>
 								<div class="col-2 bg-red">
 								</div>
-								<div class="col-2 bg-pink">
+								<div class="col-2 bg-purple">
 								</div>
 								<div class="col-2 bg-purple">
 								</div>
@@ -92,10 +99,10 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
-				<div class="card card-progress mt-1 card-collapsable">
 
+				<!--Node card-->
+				<div class="card card-progress mt-1 card-collapsable">
 					<a class="card-header" href="#" data-toggle="collapse" role="button" id="sens_btn_collapse">
 						<div id="sens-panel-header">Select a Node</div>
 						<div class="card-collapsable-arrow pl-2">
@@ -117,8 +124,9 @@
 							0000-00-00 00:00:00
 						</div>
 					</div>
-
 				</div>
+
+				<!--Date picker card-->
 				<div class="card mt-1">
 					<div class="card-body p-1">
 						<div class='input-group input-group-solid bg-white'>
@@ -134,13 +142,15 @@
 								<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
 							</button>
 						</div>
-
-
 					</div>
 				</div>
+
 			</div>
+		
+		<!--Footer-->
 		</div>
 		<div id="footer-container" class="fot-home"></div>
+
 	</div>
 
 	</div>
@@ -158,10 +168,9 @@
 	<script src="assets/theme/js/bootstrap.bundle.min.js"></script>
 	<script src="assets/theme/js/scripts.js"></script>
 	<!--deck.gl-->
-	<script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
-	<script src="https://unpkg.com/@deck.gl/carto@^8.2.0/dist.min.js"></script>
-	<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.0/mapbox-gl.js"></script>
-	<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.0/mapbox-gl.css" rel="stylesheet" />
+	<script src="assets/deck.gl/core.dist.min.js"></script>
+	<script src="assets/deck.gl/carto.dist.min.js"></script>
+	<script src="assets/deck.gl/mapbox-gl.js"></script>
 	<!--MANFU js-->
 	<script src="js/sidenav-inverter-fun-kbm.js"></script>
 	<script src="js/map-manfu.js"></script>
