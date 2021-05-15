@@ -33,7 +33,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 	<!--Icons-->
 	<script src="assets/theme/js/feather.min.js.download"></script>
 	<link rel="stylesheet" href="assets/theme/css/bootstrap-icons.css">
-	<link rel="stylesheet" href="css/font-awesome.css">
+	<link rel="stylesheet" href="assets/theme/css/font-awesome.css">
 	<!--MANFU css-->
 	<link rel="stylesheet" href="css/manfu.css">
 </head>
