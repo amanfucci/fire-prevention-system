@@ -34,7 +34,7 @@ $.ajax({
     }, (s, e) => {
         sel = s;
         console.log("Date picked: " + sel.format("yyyy-MM-DD HH:mm:ss"));
-        $.cookie('selected_fps', sel.startOf('hour').format("yyyy-MM-DD HH:mm:ss"), { path: '/' })
+        $.cookie('selected_fps', sel.startOf('hour').format("yyyy-MM-DD HH:mm:ss"), { path: '/' });
         get_snapshots(sel);
         $('#date_picker span').html(sel.format('yyyy-MM-DD HH:mm'));
     });

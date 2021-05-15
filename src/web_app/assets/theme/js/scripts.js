@@ -15,13 +15,20 @@
 		trigger: "focus"
 	});
 
-	// Add active state to sidbar nav links
-	var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
-	$("#layoutSidenav_nav .sidenav a.nav-link").each(function () {
-		if (this.href === path) {
-			$(this).addClass("active");
-		}
+	$(document).ready(function () {
+		// Add active state to sidbar nav links
+		var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
+		$("#layoutSidenav_nav .sidenav a.nav-link").each(function () {
+			$(this).removeClass("active");
+			temp = this.href;
+			if (temp == path) {
+				$(this).addClass("active");
+				if($(this).parent().attr('id') != 'accordionSidenav')
+					$(this).parent().parent().collapse('show');
+			}
+		});
 	});
+
 
 	// Toggle the side navigation
 	$("#sidebarToggle").on("click", function (e) {
@@ -34,8 +41,8 @@
 
 	// Activate Bootstrap scrollspy for the sticky nav component
 	$("body").scrollspy({
-			target: "#stickyNav",
-			offset: 82
+		target: "#stickyNav",
+		offset: 82
 	});
 
 	// Scrolls to an offset anchor when a sticky nav link is clicked

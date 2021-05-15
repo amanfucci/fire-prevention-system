@@ -66,15 +66,19 @@
 							<div class="dataTable">
 								<table id="table-0" class="table table-responsive-lg table-bordered table-hover nowrap"
 									style="width: 100%;">
-								</table>
+									div class="progress">
+									<div class="progress-bar bg-primary" role="progressbar" style="width: 0%"
+										aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 							</div>
+							</table>
 						</div>
 					</div>
-
 				</div>
 
-				<!--Handlebars Template-->
-				<script id="card-template" type="text/x-handlebars-template">
+		</div>
+
+		<!--Handlebars Template-->
+		<script id="card-template" type="text/x-handlebars-template">
 					{{#each city}}
 					<!--{{name}}-->
 					<div class="card mb-4">
@@ -89,9 +93,9 @@
 					{{/each}}
 				</script>
 
-			</main>
-			<div id="footer-container"></div>
-		</div>
+		</main>
+		<div id="footer-container"></div>
+	</div>
 	</div>
 
 
