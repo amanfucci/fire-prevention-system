@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<div id='layoutSidenav_nav'>
+    <nav class='sidenav shadow-right sidenav-light'>
+        <div class='sidenav-menu'>
+            <div class='nav accordion' id='accordionSidenav'>
+                <!-- Sidenav Link (Home)-->
+                <a class='nav-link' href='index.html'>
+                    <div class='nav-link-icon'> <i class='bi bi-map-fill'></i> </div>
+                    Home
+                </a>
+                <!-- Sidenav Link (User Area)-->
+                <a class='nav-link' href='user_area.html'>
+                    <div class='nav-link-icon'> <i class='bi bi-person-fill'></i> </div>
+                    User Area
+                </a>
+                <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
+                    data-target="#collapse_data" aria-expanded="false" aria-controls="collapse_data">
+                    <div class="nav-link-icon">
+                        <i class="bi bi-archive-fill"></i>
+                    </div>
+                    Data
+                    <div class="sidenav-collapse-arrow">
+                        <i class="fa fa-angle-down"></i>
+                    </div>
+                </a>
+                <div class="collapse" id="collapse_data" data-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                        <!-- Sidenav Link (Data List)-->
+                        <a class='nav-link' href='readings.html'>
+                            Readings
+                        </a>
+                        <!-- Sidenav Link (Nodes List)-->
+                        <a class='nav-link' href='nodes.html'>
+                            Nodes
+                        </a>
+                        <!-- Sidenav Link (Snapshot List)-->
+                        <a class='nav-link' href='snapshots.html'>
+                            Snapshots
+                        </a>
+                    </nav>
+                </div>
+                <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
+                    data-target="#collapse_technician_area" aria-expanded="false" aria-controls="collapse_data">
+                    <div class="nav-link-icon">
+                        <i class="bi bi-binoculars-fill"></i>
+                    </div>
+                    Technician Area
+                    <div class="sidenav-collapse-arrow">
+                        <i class="fa fa-angle-down"></i>
+                    </div>
+                </a>
+                <div class="collapse" id="collapse_technician_area" data-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                        <!-- Sidenav Link (View Requests List)-->
+                        <a class='nav-link' href='view_requests_technician.php'>
+                            View Requests
+                        </a>
+                        <!-- Sidenav Link (Report on-site service)-->
+                        <a class='nav-link' href='report_service.php'>
+                            Report on-site service
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        </a>
+    </nav>
+</div>
+
+</html>

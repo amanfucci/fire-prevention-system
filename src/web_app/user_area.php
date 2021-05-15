@@ -70,7 +70,7 @@
                                 <?php
                                 include "assets/php/conn_lib.php";
                                 if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
-                                    header("location: error.html");
+                                    header("location: error_401.html");
 
                                 $my_user = $_SESSION['user'];
                                 $sql = "SELECT * FROM utenti WHERE email like '$my_user'";

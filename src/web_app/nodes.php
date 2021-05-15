@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
-	header("location: error.html");
+	header("location: error_401.html");
 ?>
 <!--
 		* MANFU - FPS

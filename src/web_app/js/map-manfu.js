@@ -11,8 +11,8 @@ $.ajax({
     //On request received
     data = JSON.parse(data);
     //console.log(data);
-    min = sel = moment(new Date(data['min'])).startOf('hour');
-    max = moment(new Date(data['max'])).startOf('hour');
+    min = moment(new Date(data['min'])).startOf('hour');
+    max = sel =  moment(new Date(data['max'])).startOf('hour');
 
     if (moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss").isValid())
         sel = moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss");
