@@ -17,16 +17,21 @@
 
 	$(document).ready(function () {
 		// Add active state to sidbar nav links
-		var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
+		var path = window.location.href ; // because the 'href' property of the DOM element is the absolute path
+		if(path.search(/\./) == -1)
+			path += 'index.html'
+		//console.log(path);
 		$("#layoutSidenav_nav .sidenav a.nav-link").each(function () {
 			$(this).removeClass("active");
 			temp = this.href;
+			
 			if (temp == path) {
 				$(this).addClass("active");
 				if($(this).parent().attr('id') != 'accordionSidenav')
 					$(this).parent().parent().collapse('show');
 			}
 		});
+		
 	});
 
 
