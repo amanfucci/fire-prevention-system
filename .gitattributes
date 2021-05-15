@@ -6,4 +6,4 @@ src/web_app/assets/daterangepicker/** -linguist-detectable
 src/web_app/assets/deck.gl/** -linguist-detectable
 src/web_app/assets/handlebars/** -linguist-detectable
 src/web_app/assets/jquery/** -linguist-detectable
-src/web_app/assets/them/** -linguist-detectable
+src/web_app/assets/theme/** -linguist-detectable
