@@ -1,0 +1,9 @@
+# When shell scripts end in CRLF, bash gives a cryptic error message
+*.sh text eol=lf
+src/web_app/assets/amcharts/** -linguist-detectable
+src/web_app/assets/DataTables/** -linguist-detectable
+src/web_app/assets/daterangepicker/** -linguist-detectable
+src/web_app/assets/deck.gl/** -linguist-detectable
+src/web_app/assets/handlebars/** -linguist-detectable
+src/web_app/assets/jquery/** -linguist-detectable
+src/web_app/assets/them/** -linguist-detectable
