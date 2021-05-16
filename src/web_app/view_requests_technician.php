@@ -50,7 +50,7 @@
                                 <div class="col-auto mt-4">
                                     <h1 class="page-header-title">
                                         <div class="page-header-icon">
-                                            <i class="bi bi-binoculars-fill icon-h1"></i>
+                                            <i class="bi bi-cpu-fill icon-h1"></i>
                                         </div>
                                         Requests
                                     </h1>
@@ -68,13 +68,13 @@
                     include "assets/php/conn_lib.php";
                     if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
                         header("location: error_401.html");
-                    if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
+                    if ($_SESSION['user_type'] != 'tecnico')
                         header("location: error_401.html");
 
                     $sql = [];
                     $result = [];
                     $row = [];
-                    $sql[0] = "SELECT * FROM richieste inner join utenti on tecnico = utenteId where supervisore = (select utenteId from utenti where email like '" . $_SESSION['user'] . "') order by timestamp desc";
+                    $sql[0] = "SELECT * FROM richieste inner join utenti on supervisore = utenteId where tecnico = (select utenteId from utenti where email like '" . $_SESSION['user'] . "') order by timestamp desc";
                     $result[0] = $conn->query($sql[0]);
                     $card_template = [
                         'open' => '<div class="card mb-4">
@@ -95,12 +95,12 @@
                             $card = $card_template;
                             //Print card header
                             $card['header'] .= $row[0]['timestamp'] . ' (Id: ' . $row[0]['richiestaId'] . '), ' . $p2text[$row[0]['urgenza']] . ' Priority';
-                            $card['footer'] .= 'Assigned to ' . $row[0]['nome'] . ' ' . $row[0]['cognome'] . " (Id: " . $row[0]['tecnico'] . ")"
+                            $card['footer'] .= 'Assigned by ' . $row[0]['nome'] . ' ' . $row[0]['cognome'] . " (Id: " . $row[0]['tecnico'] . ")"
                                 . ' for the reason: \'<i>' . $row[0]['motivazione'] . '</i>\'';
                             $sql[1] = "SELECT i.interventoId as Id, i.timestamp as timestamp, i.descrizione as Description, i.risolutivo as Solved
                             FROM richieste as r
                             inner join interventi as i on richiesta = richiestaId
-                            where r.richiestaId = " . $row[0]['richiestaId'] .
+                            where r.richiestaId =" . $row[0]['richiestaId'] .
                             " order by i.timestamp desc";
                             $result[1] = $conn->query($sql[1]);
                             if (!empty($result[1]) && $result[1]->num_rows > 0) {

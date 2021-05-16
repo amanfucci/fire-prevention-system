@@ -2,7 +2,7 @@
 include "conn_lib.php";
 if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
     header("location: ../../error_401.html");
-else if ($_SESSION['user_type'] == 'user' || $_SESSION['user_type'] == 'technician')
+if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
     header("location: error_401.html");
 $reason = $_POST['reason'];
 $priority = $_POST['priority'];

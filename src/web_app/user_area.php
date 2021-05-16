@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="WebApp per il controllo degli incendi nella pineta di Grosseto">
     <meta name="author" content="MANFU">
-    <title>Login - FPS</title>
+    <title>User Area - FPS</title>
     <link rel="icon" type="image/x-icon" href="img/pc_icon.png">
 
     <!--Theme js/css-->

@@ -1,4 +1,9 @@
 
+/*
+		* MANFU - FPS
+		* Copyright 2021 MANFU
+		* Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
+		*/
 $(document).ready(function () {
 
     var fot = 'This information is copyright to MANFU ©';
@@ -16,6 +21,7 @@ $(document).ready(function () {
                         messageBottom: fot
                     },
                 ],
+                order: [[ 1, "desc" ]],
                 responsive: true,
                 pagingType: 'full',
             });

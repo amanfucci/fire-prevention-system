@@ -2,7 +2,7 @@
 include "assets/php/conn_lib.php";
 if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
     header("location: error_401.html");
-if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
+if ($_SESSION['user_type'] != 'tecnico')
     header("location: error_401.html");
 ?>
 <!--
@@ -84,7 +84,26 @@ if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
     <!--Topnav-->
     <div id="topnav-container">
     </div>
-
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">No active Request </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    Currently, you have no active request.
+                    Sit back and relax :)
+                    <a class="text-arrow-icon pt-3" href="index.html">
+                    <i class="bi bi-arrow-left-short ml-0 mr-1 icon-h1"></i></i>
+                    Return to Home
+                  </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
     <div id="check_window" class="d-none d-md-block"></div>
     <div id="layoutSidenav">
         <div id="sidenav-container">
@@ -98,11 +117,11 @@ if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
                                 <div class="col-auto mt-4">
                                     <h1 class="page-header-title">
                                         <div class="page-header-icon">
-                                            <i class="bi bi-binoculars-fill icon-h1"></i>
+                                            <i class="bi bi-cpu-fill icon-h1"></i>
                                         </div>
                                         Requests
                                     </h1>
-                                    <div class="page-header-subtitle">Forward new requests for on-site services
+                                    <div class="page-header-subtitle">Report new on-site services
                                     </div>
                                 </div>
                             </div>
@@ -115,32 +134,31 @@ if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
                     <div class="card mb-4">
                         <div class="card-body">
                             <form id='form-1'>
-                                <!-- Form Group (Reason)-->
+                                <!-- Form Group (Descr)-->
                                 <div class="form-group">
-                                    <label for="inputReason">Reason of the request</label>
-                                    <textarea class="form-control" id="inputReason" required></textarea>
+                                    <label for="inputDescr">Description of the on-site service</label>
+                                    <textarea class="form-control" id="inputDescr" required></textarea>
                                 </div>
                                 <div class="form-row">
-                                    <!-- Form Group (Priority)-->
-                                    <div class="form-group col-6">
-                                        <label for="inputPriority">Priority</label>
-                                        <select class="form-control" id="inputPriority" required>
-                                            <option value="1">Low</option>
-                                            <option value="2">Medium</option>
-                                            <option value="3">High</option>
+                                    <!-- Form Group (Request)-->
+                                    <div class="form-group col-12">
+                                        <label for="inputRequest">Request</label>
+                                        <select class="form-control" id="inputRequest" required>
                                         </select>
                                     </div>
-                                    <!-- Form Group (Node)-->
-                                    <div class="form-group col-6">
-                                        <label for="inputNode">Node</label>
-                                        <select class="form-control" id="inputNode" required>
-                                        </select>
+                                </div>
+                                <div class="form-row">
+                                    <!-- Form Group (Solved)-->
+
+                                    <div class="custom-control custom-checkbox ml-2">
+                                        <input class="custom-control-input" id="inputSolved" type="checkbox" value="1">
+                                        <label class="custom-control-label" for="inputSolved">Solved</label>
                                     </div>
                                 </div>
                                 <!-- Form Group (login box)-->
                                 <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="btn btn-primary" id="inputSubmit">Submit</a>
-                                    <a class="align-text-bottom isDisabled" hidden id="errorSubmit">Error forwarding your request, please contact the IT department</a>
+                                    <a class="align-text-bottom isDisabled" hidden id="errorSubmit">Error submitting your report, please contact the IT department</a>
                                 </div>
                             </form>
                         </div>
@@ -167,7 +185,7 @@ if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
     <script defer src="assets/theme/js/scripts.js"></script>
     <script defer src="assets/theme/js/selectize.min.js"></script>
     <!--MANFU js-->
-    <script src="js/forward-requests-manfu.js"></script>
+    <script src="js/report-service-manfu.js"></script>
 
 </body>
 
