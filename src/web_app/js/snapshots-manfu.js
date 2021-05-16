@@ -42,6 +42,7 @@ function setTable(data, i) {
             },],
         responsive: true,
         pagingType: 'full',
+        order: [[ 0, "desc" ]],
         columns: [
             { data: "timestamp", title: "Date" },
             { data: "titolo", title: "Title" },
@@ -55,3 +56,43 @@ function setSnapshot(timestamp){
     console.log(timestamp);
     $.cookie('selected_fps', moment(new Date(timestamp)).startOf('hour').format("yyyy-MM-DD HH:mm:ss"), { path: '/' });
 }
+
+$("#inputSubmit").click(function () {
+    $("#errorSubmit").prop('hidden', true);
+
+    title = $("#inputTitle").val();
+    descr = $("#inputDescr").val();
+    //console.log(node);
+    if ($("#form-1").valid()) {
+        $.ajax({
+            url: "assets/php/take_snapshot.php",
+            type: "post",
+            async: true,
+            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            data: "&title=" + title + "&descr=" + descr
+        }).done(function (data) {
+            //On request received
+            data = JSON.parse(data);
+            console.log(data);
+            if (data[0]) {
+                $(window).attr("location", "snapshots.php")
+            }
+            else {
+                setTimeout(function () {
+                    $("#errorSubmit").prop('hidden', false);
+                }, 20);
+            }
+        }).fail(function (data) {
+            alert("03, Error fetching submit response");
+        });
+    }
+});
+
+$(function(){
+    $("#form-1").validate({
+        rules:{
+            title: 'required',
+            descr: 'required'
+        }
+    })
+});

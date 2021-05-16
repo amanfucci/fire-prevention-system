@@ -133,7 +133,7 @@ else if ($_SESSION['user_type'] == 'user' || $_SESSION['user_type'] == 'technici
                                     <!-- Form Group (Node)-->
                                     <div class="form-group col-6">
                                         <label for="inputNode">Node</label>
-                                        <select class="form-control" id="inputNode" name="inputNode" required>
+                                        <select class="form-control" id="inputNode" required>
                                         </select>
                                     </div>
                                 </div>

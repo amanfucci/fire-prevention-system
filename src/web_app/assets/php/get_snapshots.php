@@ -4,7 +4,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 	header("location: ../../error_401.html");
 $snapshot = $_POST['snapshot'];
 
-$sql = "SELECT * from snapshot;";
+$sql = "SELECT * from snapshot order by timestamp desc;";
 
 $data = [];
 

@@ -28,8 +28,6 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 	<link rel="stylesheet" type="text/css" href="assets/DataTables/datatables.min.css" />
 	<link href="assets/DataTables/DataTables-1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 	<script src="assets/theme/js/all.min.js.download"></script>
-	<script src="assets/theme/js/feather.min.js.download"></script>
-
 	<!--Icons-->
 	<script src="assets/theme/js/feather.min.js.download"></script>
 	<link rel="stylesheet" href="assets/theme/css/bootstrap-icons.css">
@@ -81,6 +79,29 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 								</table>
 							</div>
 						</div>
+						<div class="card-footer">
+							<form id="form-1">
+								<div class="form-row">
+									<!-- Form Group (Title)-->
+									<div class="form-group pr-2">
+										<label for="inputTitle">Title</label>
+										<input class="form-control" id="inputTitle" name="title" type="text" required>
+									</div>
+									<!-- Form Group (Description)-->
+									<div class="form-group pr-2">
+										<label for="inputDescr">Description</label>
+										<textarea class="form-control" rows="1" id="inputDescr" name="descr" type="text"></textarea>
+									</div>
+								</div>
+								<div class="form-row">
+									<!-- Form Group (Submit box)-->
+									<div class="form-group d-flex align-items-center justify-content-between mt-2 mb-0">
+										<a class="btn btn-primary" id="inputSubmit">Take Snapshot</a>
+										<a class="align-text-bottom isDisabled" hidden id="errorSubmit">Error taking Spanshot, please contact the IT department</a>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
 
 				</div>
@@ -95,6 +116,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 	<!--JQuery-->
 	<script src="assets/jquery/jquery-3.5.1.min.js"></script>
 	<script src="assets/jquery/jquery.cookie.js"></script>
+	<script src="assets/jquery/jquery-validate/jquery.validate.min.js"></script>
 	<!--MANFU Hb-->
 	<script src="assets/handlebars/handlebars.min-v4.7.6.js"></script>
 	<script src="assets/handlebars/page_layout.js"></script>
@@ -103,12 +125,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 	<script defer src="assets/theme/js/scripts.js"></script>
 	<script type="text/javascript" src="assets/DataTables/datatables.min.js"></script>
 	<script src="assets/daterangepicker/moment-with-locales.min.js"></script>
-	<!--deck.gl-->
-	<script src="assets/deck.gl/core.dist.min.js"></script>
-	<script src="assets/deck.gl/carto.dist.min.js"></script>
-	<script src="assets/deck.gl/mapbox-gl.js"></script>
 	<!--MANFU js-->
-	<script src="js/authenticate-manfu.js"></script>
 	<script src="js/snapshots-manfu.js"></script>
 
 </body>

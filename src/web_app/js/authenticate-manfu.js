@@ -5,7 +5,7 @@
 		pw = $("#inputPassword").val();
 		console.log(pw);
 		$("#errorLogin").prop('hidden', true);
-		console.log('clicked');
+		//console.log('clicked');
 		$.ajax({
 			url: "assets/php/check_user.php",
 			type: "post",

@@ -39,6 +39,7 @@ function setTable(data, i) {
             },],
         responsive: true,
         pagingType: 'full',
+        order: [[ 0, "desc" ]],
         columns: [
             { data: "timestamp", title: "Date" },
             { data: "sensore", title: "Node" },
