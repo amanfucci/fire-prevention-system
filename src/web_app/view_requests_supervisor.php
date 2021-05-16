@@ -79,7 +79,7 @@
                     $card_template = [
                         'open' => '<div class="card mb-4">
                                         <div class="card-header">',
-                        'icon' => '<i class = "bi bi-clock-fill icon-h4 pr-4"></i>',
+                        'icon' => '<i class = "bi bi-clock-fill icon-h4 pr-4 text-warning"></i>',
                         'header' => '',
                         'body' => '</div>
                                     <div class="card-body">
@@ -96,7 +96,8 @@
                             //Print card header
                             $card['header'] .= $row[0]['timestamp'] . ' (Id: ' . $row[0]['richiestaId'] . '), ' . $p2text[$row[0]['urgenza']] . ' Priority';
                             $card['footer'] .= 'Assigned to ' . $row[0]['nome'] . ' ' . $row[0]['cognome'] . " (Id: " . $row[0]['tecnico'] . ")"
-                                . ' for the reason: \'<i>' . $row[0]['motivazione'] . '</i>\'';
+                                . ' for the reason: \'<i>' . $row[0]['motivazione'] . '</i>\'
+                                <p>Node: ' . $row[0]['sensore'] .'</p>';
                             $sql[1] = "SELECT i.interventoId as Id, i.timestamp as timestamp, i.descrizione as Description, i.risolutivo as Solved
                             FROM richieste as r
                             inner join interventi as i on richiesta = richiestaId

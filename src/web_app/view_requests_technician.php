@@ -79,7 +79,7 @@
                     $card_template = [
                         'open' => '<div class="card mb-4">
                                         <div class="card-header">',
-                        'icon' => '<i class = "bi bi-clock-fill icon-h4 pr-4"></i>',
+                        'icon' => '<i class = "bi bi-clock-fill icon-h4 pr-4 text-warning"></i>',
                         'header' => '',
                         'body' => '</div>
                                     <div class="card-body">
