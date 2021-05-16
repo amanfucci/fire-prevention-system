@@ -59,7 +59,7 @@ CREATE TABLE richieste (
   richiestaId int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   timestamp timestamp NOT NULL,
   motivazione varchar(500) NOT NULL,
-  urgenza set('1', '2', '3') NOT NULL DEFAULT '3',
+  urgenza set('1', '2', '3') NOT NULL DEFAULT '1',
   sensore bigint NOT NULL,
   supervisore int UNSIGNED NOT NULL,
   FOREIGN KEY (supervisore) references utenti(utenteId),

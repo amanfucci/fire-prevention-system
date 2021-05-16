@@ -45,8 +45,7 @@
 			console.log(data);
 			$.removeCookie('user_type',{ path: '/' });
 			$.removeCookie('user',{ path: '/' });
-			$(window).attr("location","index.html")
-			alert("Successful LogOut");
+			$(window).attr("location","index.html");
 		}).fail(function (data) {
 			alert("02, Error fetching logout response");
 		});
