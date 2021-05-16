@@ -23,7 +23,6 @@
     <link rel="stylesheet" type="text/css" href="assets/DataTables/datatables.min.css" />
     <link href="assets/DataTables/DataTables-1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <script src="assets/theme/js/all.min.js.download"></script>
-    <script src="assets/theme/js/feather.min.js.download"></script>
 
     <!--Icons-->
     <script src="assets/theme/js/feather.min.js.download"></script>
@@ -63,7 +62,7 @@
                     </div>
                 </header>
                 <!-- Main page content-->
-                <div class="container mt-n10" id="data-content">
+                <div class="container mt-n10">
 
                     <?php
                     include "assets/php/conn_lib.php";
@@ -72,9 +71,12 @@
                     else if ($_SESSION['user_type'] == 'user' || $_SESSION['user_type'] == 'technician')
                         header("location: error_401.html");
 
-                    $sql = "SELECT * FROM richieste inner join utenti on tecnico = utenteId where supervisore = (select utenteId from utenti where email like '" . $_SESSION['user'] . "') order by timestamp desc";
-                    $result = $conn->query($sql);
-                    $card = [
+                    $sql = [];
+                    $result = [];
+                    $row = [];
+                    $sql[0] = "SELECT * FROM richieste inner join utenti on tecnico = utenteId where supervisore = (select utenteId from utenti where email like '" . $_SESSION['user'] . "') order by timestamp desc";
+                    $result[0] = $conn->query($sql[0]);
+                    $card_template = [
                         'open' => '<div class="card mb-4">
                                         <div class="card-header">',
                         'icon' => '<i class = "bi bi-clock-fill icon-h4 pr-4"></i>',
@@ -82,34 +84,36 @@
                         'body' => '</div>
                                     <div class="card-body">
                                     <div class="dataTable">
-                                    <table class="table table-responsive-lg table-bordered table-hover nowrap" style="width: 100%; min-height: 5vh;">',
+                                    <table class="table table-responsive-lg table-bordered table-hover nowrap" style="width: 100%;">',
                         'footer' => '</table></div></div><div class="card-footer">',
                         'close' => '</div></div>'
                     ];
                     $p2text = ['1' => 'Low', '2' => 'Medium', '3' => 'High'];
-                    if (!empty($result) && $result->num_rows > 0) {
+                    if (!empty($result[0]) && $result[0]->num_rows > 0) {
 
-                        while ($row = $result->fetch_assoc()) {
+                        while ($row[0] = $result[0]->fetch_assoc()) {
+                            $card = $card_template;
                             //Print card header
-                            $card['header'] .= $row['timestamp'] . ' (Id: ' . $row['richiestaId'] . '), ' . $p2text[$row['urgenza']] . ' Priority';
-                            $card['footer'] .= 'Assigned to ' . $row['nome'] . ' ' . $row['cognome'] . " (Id: " . $row['tecnico'] . ")"
-                                . ' for the reason: \'<i>' . $row['motivazione'] . '</i>\'';
-                            $sql = "SELECT i.interventoId as Id, i.timestamp as timestamp, i.descrizione as Description, i.risolutivo as Solved
+                            $card['header'] .= $row[0]['timestamp'] . ' (Id: ' . $row[0]['richiestaId'] . '), ' . $p2text[$row[0]['urgenza']] . ' Priority';
+                            $card['footer'] .= 'Assigned to ' . $row[0]['nome'] . ' ' . $row[0]['cognome'] . " (Id: " . $row[0]['tecnico'] . ")"
+                                . ' for the reason: \'<i>' . $row[0]['motivazione'] . '</i>\'';
+                            $sql[1] = "SELECT i.interventoId as Id, i.timestamp as timestamp, i.descrizione as Description, i.risolutivo as Solved
                             FROM richieste as r
                             inner join richieste_interventi as r_i on richiestaId = richiesta
                             inner join interventi as i on interventoId = intervento
-                            where supervisore = (select utenteId from utenti where email like '" . $_SESSION['user'] . "') order by i.timestamp desc";
-                            $result = $conn->query($sql);
-                            if (!empty($result) && $result->num_rows > 0) {
+                            where r.richiestaId = " . $row[0]['richiestaId'] .
+                            " order by i.timestamp desc";
+                            $result[1] = $conn->query($sql[1]);
+                            if (!empty($result[1]) && $result[1]->num_rows > 0) {
                                 $first = true;
-                                while ($row = $result->fetch_assoc()) {
+                                while ($row[1] = $result[1]->fetch_assoc()) {
                                     //Print header checkmark and card body
                                     $line = "<tr>";
 
                                     if ($first)
                                         $card['body'] .= "<thead><tr>";
 
-                                    foreach ($row as $k => $v) {
+                                    foreach ($row[1] as $k => $v) {
                                         if ($first) {
                                             $card['body'] .= "<th>" . $k . "</th>";
                                         }
@@ -137,15 +141,21 @@
                             } else {
                                 $card['body'] .= "<p class='no-services'>No on-site service yet</p>";
                             }
+                            foreach ($card as $element) {
+                                echo $element;
+                            }
                         }
                     } else {
+                        $card = $card_template;
                         $card['header'] .= 'No forwarded request';
-                        $card['body'] .= '...';
-                        $card['body'] .= '...';
+                        $card['body'] .= '<a class="text-arrow-icon" href="forward_requests.php"><i class="bi bi-arrow-right-short icon-h1"></i>Go to Forward new requests</a><p class="no-services"></p>';
+                        $card['icon'] = '<i class = "bi bi-x-circle-fill icon-h4 pr-4"></i>';
+                        $card['footer'] .= '. . .';
+                        foreach ($card as $element) {
+                            echo $element;
+                        }
                     }
-                    foreach ($card as $element) {
-                        echo $element;
-                    }
+
                     ?>
 
                 </div>
@@ -167,10 +177,6 @@
     <script defer src="assets/theme/js/bootstrap.bundle.min.js"></script>
     <script defer src="assets/theme/js/scripts.js"></script>
     <script type="text/javascript" src="assets/DataTables/datatables.min.js"></script>
-    <!--deck.gl-->
-    <script src="assets/deck.gl/core.dist.min.js"></script>
-    <script src="assets/deck.gl/carto.dist.min.js"></script>
-    <script src="assets/deck.gl/mapbox-gl.js"></script>
     <!--MANFU js-->
     <script src="js/authenticate-manfu.js"></script>
     <script src="js/view-requests-manfu.js"></script>

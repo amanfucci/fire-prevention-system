@@ -4,7 +4,7 @@ $(document).ready(function () {
     var fot = 'This information is copyright to MANFU ©';
     $(".table").each(function () {
         var titl = $(this).parent().parent().parent().find('.card-header').text() + ' - Civil Protection of Grosseto';
-        if ($(this).find('.no-services').length == 0) {
+        if ($(this).parent().find('.no-services').length == 0) {
             $(this).DataTable({
                 dom: 'fltiprB',
                 buttons: [
@@ -19,6 +19,8 @@ $(document).ready(function () {
                 responsive: true,
                 pagingType: 'full',
             });
+        }
+        else{
         }
     });
 });

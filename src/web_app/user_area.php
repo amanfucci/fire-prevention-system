@@ -79,7 +79,7 @@
                                 if (!empty($result) && $result->num_rows > 0) {
                                     $row = $result->fetch_assoc();
                                     if ($row['ruolo'] === null)
-                                        $row['ruolo'] = 'utente';
+                                        $row['ruolo'] = 'Utente';
 
                                     echo '<div class="form-row">
                                     <!-- Form Group (first name)-->

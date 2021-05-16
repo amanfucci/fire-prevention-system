@@ -34,10 +34,15 @@
             <div class="col-lg-6">
               <div class="text-center mt-4">
                 <img class="img-fluid p-4" src="assets/theme/img/401-error-unauthorized.svg">
-                <p class="lead">Access to this resource is denied.</p>
+                <p class="lead">Access to this resource is denied. Log in first.</p>
                 <a class="text-arrow-icon" href="index.html">
-                  <i class="bi bi-arrow-left-short ml-0 mr-1 icon-h1"></i></i>
+                  <i class="bi bi-arrow-left-short ml-0 mr-1 icon-h1"></i>
                   Return to Home
+                </a>
+                <br>
+                <a class="text-arrow-icon" href="login.html">
+                  <i class="ml-0 mr-1 icon-h1" data-feather='log-in'></i>
+                  Log in
                 </a>
               </div>
             </div>
@@ -56,6 +61,11 @@
   <!--Theme js-->
   <script src="assets/theme/js/bootstrap.bundle.min.js"></script>
   <script src="assets/theme/js/scripts.js"></script>
+  <!--MANFU js-->
+  <script src="js/authenticate-manfu.js"></script>
+  <script>
+    logOut(false);
+  </script>
 
 </body>
 
