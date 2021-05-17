@@ -73,6 +73,7 @@
         cf = $("#inputFiscalCodeChange").val();
         phone = $("#inputPhoneNumberChange").val();
         user_type = $("#inputUserTypeChange").val();
+        pw = $("#inputPasswordChange").val();
         //console.log(first_name);
         if ($("#form-change").valid()) {
 
@@ -84,6 +85,7 @@
                 data: "&first_name=" + first_name + "&last_name=" + last_name +
                     "&email=" + email + "&cf=" + cf + "&phone="
                     + phone + "&user_type=" + user_type + "&user_id=" + user_id
+                    + "&pw=" + pw 
             }).done(function (data) {
                 //On request received
                 data = JSON.parse(data);
@@ -111,6 +113,7 @@
         cf = $("#inputFiscalCode").val();
         phone = $("#inputPhoneNumber").val();
         user_type = $("#inputUserType").val();
+        pw = $("#inputPassword").val();
         //console.log(first_name);
         if ($("#form-new").valid()) {
 
@@ -120,7 +123,7 @@
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
                 data: "&first_name=" + first_name + "&last_name=" + last_name +
-                    "&email=" + email + "&cf=" + cf + "&phone="
+                    "&email=" + email + "&cf=" + cf + "&phone=" + "&pw=" + pw 
                     + phone + "&user_type=" + user_type
             }).done(function (data) {
                 //On request received

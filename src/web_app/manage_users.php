@@ -170,6 +170,13 @@ if ($_SESSION['user_type'] != 'amministratore')
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-row">
+                                    <!-- Form Group (Password)-->
+                                    <div class="form-group col-md-6">
+                                        <label class="small mb-1" for="inputPasswordChange">Password</label>
+                                        <input class="form-control" id="inputPasswordChange" type="password">
+                                    </div>
+                                </div>
                                 <!-- Form Group (Submit box)-->
                                 <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="btn btn-primary" id="inputSubmitChange">Submit</a>
@@ -226,6 +233,13 @@ if ($_SESSION['user_type'] != 'amministratore')
                                             <option value="Tecnico">Tecnico</option>
                                             <option value="Amministratore">Amministratore</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <!-- Form Group (Password)-->
+                                    <div class="form-group col-md-6">
+                                        <label class="small mb-1" for="inputPassword">Password</label>
+                                        <input class="form-control" id="inputPassword" type="password">
                                     </div>
                                 </div>
                                 <!-- Form Group (Submit box)-->
