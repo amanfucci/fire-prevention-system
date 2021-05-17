@@ -85,7 +85,7 @@
                 data: "&first_name=" + first_name + "&last_name=" + last_name +
                     "&email=" + email + "&cf=" + cf + "&phone="
                     + phone + "&user_type=" + user_type + "&user_id=" + user_id
-                    + "&pw=" + pw 
+                    + "&pw=" + pw
             }).done(function (data) {
                 //On request received
                 data = JSON.parse(data);
@@ -123,7 +123,7 @@
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
                 data: "&first_name=" + first_name + "&last_name=" + last_name +
-                    "&email=" + email + "&cf=" + cf + "&phone=" + "&pw=" + pw 
+                    "&email=" + email + "&cf=" + cf + "&phone=" + "&pw=" + pw
                     + phone + "&user_type=" + user_type
             }).done(function (data) {
                 //On request received
@@ -151,5 +151,73 @@
         $("#inputPhoneNumberChange").val(data['telefono']);
         $("#inputUserTypeChange").val(data['ruolo']);
     }
+
+
+    $(function () {
+        $("#form-change").validate({
+            rules: {
+                inputFirstNameChange: {
+                    required: true,
+                    minlength: 2
+                },
+                inputLastNameChange: {
+                    required: true,
+                    minlength: 2
+                },
+                inputEmailChange: {
+                    required: true,
+                    email: true
+                },
+                inputFiscalCodeChange: {
+                    required: true,
+                    minlength: 16
+                },
+                inputPhoneNumberChange: {
+                    required: true,
+                    minlength: 10
+                },
+                inputPasswordChange: {
+                    required: true,
+                    minlength: 5
+                },
+                inputUserTypeChange: {
+                    required: true,
+                }
+
+            }
+        });
+        $("#form-new").validate({
+            rules: {
+                inputFirstName: {
+                    required: true,
+                    minlength: 2
+                },
+                inputLastName: {
+                    required: true,
+                    minlength: 2
+                },
+                inputEmail: {
+                    required: true,
+                    email: true
+                },
+                inputFiscalCode: {
+                    required: true,
+                    minlength: 16
+                },
+                inputPhoneNumber: {
+                    required: true,
+                    minlength: 10
+                },
+                inputPassword: {
+                    required: true,
+                    minlength: 5
+                },
+                inputUserType: {
+                    required: true,
+                }
+
+            }
+        });
+    });
 
 })(jQuery);

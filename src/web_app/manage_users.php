@@ -131,12 +131,12 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (first name)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputFirstNameChange">First name</label>
-                                        <input class="form-control" id="inputFirstNameChange" type="text" required>
+                                        <input class="form-control" name="inputFirstNameChange" id="inputFirstNameChange" type="text" required>
                                     </div>
                                     <!-- Form Group (last name)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputLastNameChange">Last name</label>
-                                        <input class="form-control" id="inputLastNameChange" type="text" required>
+                                        <input class="form-control" name="inputLastNameChange" id="inputLastNameChange" type="text" required>
                                     </div>
 
                                 </div>
@@ -144,12 +144,12 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (fiscal code)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputFiscalCodeChange">Fiscal Code</label>
-                                        <input class="form-control" id="inputFiscalCodeChange" type="text" required>
+                                        <input class="form-control" name="inputFiscalCodeChange" id="inputFiscalCodeChange" type="text" required>
                                     </div>
                                     <!-- Form Group (phone)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputPhoneNumberChange">Phone Number</label>
-                                        <input class="form-control" pattern=".{10}" id="inputPhoneNumberChange" type="text" required>
+                                        <input class="form-control" name="inputPhoneNumberChange" id="inputPhoneNumberChange" type="text" pattern=".{10}" required>
                                     </div>
 
                                 </div>
@@ -157,12 +157,12 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (fiscal code)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputEmailChange">Email</label>
-                                        <input class="form-control" id="inputEmailChange" type="email" required>
+                                        <input class="form-control" name="inputEmailChange" id="inputEmailChange" type="email" required>
                                     </div>
                                     <!-- Form Group (phone)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputUserTypeChange">User Type</label>
-                                        <select class="form-control" id="inputUserTypeChange" required>
+                                        <select class="form-control" name="inputUserTypeChange" id="inputUserTypeChange" required>
                                             <option value="Utente">Utente</option>
                                             <option value="Supervisore">Supervisore</option>
                                             <option value="Tecnico">Tecnico</option>
@@ -174,7 +174,7 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (Password)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputPasswordChange">Password</label>
-                                        <input class="form-control" id="inputPasswordChange" type="password">
+                                        <input class="form-control" name="inputPasswordChange" id="inputPasswordChange" type="password" required>
                                     </div>
                                 </div>
                                 <!-- Form Group (Submit box)-->
@@ -196,12 +196,12 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (first name)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputFirstName">First name</label>
-                                        <input class="form-control" id="inputFirstName" type="text" required>
+                                        <input class="form-control" name="inputFirstName" id="inputFirstName" type="text" required>
                                     </div>
                                     <!-- Form Group (last name)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputLastName">Last name</label>
-                                        <input class="form-control" id="inputLastName" type="text" required>
+                                        <input class="form-control" name="inputLastName" id="inputLastName" type="text" required>
                                     </div>
 
                                 </div>
@@ -209,12 +209,12 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (fiscal code)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputFiscalCode">Fiscal Code</label>
-                                        <input class="form-control" id="inputFiscalCode" type="text" required>
+                                        <input class="form-control" name="inputFiscalCode" id="inputFiscalCode" type="text" required>
                                     </div>
                                     <!-- Form Group (phone)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputPhoneNumber">Phone Number</label>
-                                        <input class="form-control" pattern=".{10}" id="inputPhoneNumber" type="text" required>
+                                        <input class="form-control" name="inputPhoneNumber" id="inputPhoneNumber" type="text" pattern=".{10}" required>
                                     </div>
 
                                 </div>
@@ -222,12 +222,12 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (fiscal code)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputEmail">Email</label>
-                                        <input class="form-control" id="inputEmail" type="email" required>
+                                        <input class="form-control" name="inputEmail" id="inputEmail" type="email" required>
                                     </div>
                                     <!-- Form Group (phone)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputUserType">User Type</label>
-                                        <select class="form-control" id="inputUserType" required>
+                                        <select class="form-control" name="inputUserType" id="inputUserType" required>
                                             <option value="Utente">Utente</option>
                                             <option value="Supervisore">Supervisore</option>
                                             <option value="Tecnico">Tecnico</option>
@@ -239,7 +239,7 @@ if ($_SESSION['user_type'] != 'amministratore')
                                     <!-- Form Group (Password)-->
                                     <div class="form-group col-md-6">
                                         <label class="small mb-1" for="inputPassword">Password</label>
-                                        <input class="form-control" id="inputPassword" type="password">
+                                        <input class="form-control" name="inputPassword" id="inputPassword" type="password" pattern=".{5}" required>
                                     </div>
                                 </div>
                                 <!-- Form Group (Submit box)-->
@@ -261,6 +261,8 @@ if ($_SESSION['user_type'] != 'amministratore')
     <script src="assets/jquery/jquery-3.5.1.min.js"></script>
     <script src="assets/jquery/jquery.cookie.js"></script>
     <script src="assets/jquery/jquery-validate/jquery.validate.min.js"></script>
+    <script src="assets/jquery/jquery-validate/additional-methods.min.js"></script>
+
     <!--Date Picker js-->
     <script src="assets/daterangepicker/moment-with-locales.min.js"></script>
     <script src="assets/daterangepicker/daterangepicker.min.js"></script>
