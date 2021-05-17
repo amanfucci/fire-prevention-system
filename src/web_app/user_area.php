@@ -80,6 +80,8 @@
                                     $row = $result->fetch_assoc();
                                     if ($row['ruolo'] === null)
                                         $row['ruolo'] = 'Utente';
+                                    else
+                                        $row['ruolo'] = ucfirst($row['ruolo']);
 
                                     echo '<div class="form-row">
                                     <!-- Form Group (first name)-->

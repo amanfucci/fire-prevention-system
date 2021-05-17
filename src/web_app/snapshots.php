@@ -126,6 +126,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
 	<script type="text/javascript" src="assets/DataTables/datatables.min.js"></script>
 	<script src="assets/daterangepicker/moment-with-locales.min.js"></script>
 	<!--MANFU js-->
+	<script src="js/authenticate-manfu.js"></script>
 	<script src="js/snapshots-manfu.js"></script>
 
 </body>

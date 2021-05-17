@@ -5,7 +5,7 @@
 		*/
 (function ($) {
 
-	$("#inputSubmit").click(function () {
+	$("#inputLogin").click(function () {
 		email = $("#inputEmailAddress").val();
 		pw = $("#inputPassword").val();
 		console.log(pw);

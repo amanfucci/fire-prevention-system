@@ -167,6 +167,7 @@ if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
     <script defer src="assets/theme/js/scripts.js"></script>
     <script defer src="assets/theme/js/selectize.min.js"></script>
     <!--MANFU js-->
+    <script src="js/authenticate-manfu.js"></script>
     <script src="js/forward-requests-manfu.js"></script>
 
 </body>
