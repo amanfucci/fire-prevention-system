@@ -106,6 +106,7 @@
 
     //Add new user
     $("#inputSubmit").click(function () {
+        solved = $('#inputSolved').prop('checked') ? 1 : 0;
         $("#errorSubmit").prop('hidden', true);
         first_name = $("#inputFirstName").val();
         last_name = $("#inputLastName").val();
@@ -151,7 +152,6 @@
         $("#inputPhoneNumberChange").val(data['telefono']);
         $("#inputUserTypeChange").val(data['ruolo']);
     }
-
 
     $(function () {
         $("#form-change").validate({

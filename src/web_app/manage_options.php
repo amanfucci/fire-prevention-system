@@ -114,23 +114,25 @@ if ($_SESSION['user_type'] != 'amministratore')
 
                     <div class="card mb-4">
                         <div class="card-body">
-                            <form id='form-change'>
+                            <form id='form-1'>
                                 <div class="form-row">
                                     <!-- Form Group (Snapshot Interval)-->
-                                    <div class="form-group col-6">
-                                        <label for="inputUser">Snapshot Interval (Minutes)</label>
-                                        <input class="form-control" name="inpuSN" id="inpuSN" required>
+                                    <div class="form-group">
+                                        <label for="inputSN" class="text-dark font-weight-500">Snapshot Interval</label>
+                                        <p id="labelDescr"></p>
+                                        <input class="form-control" min=5 max=180 step=5 type="number" name="inputSN" id="inputSN" required>
                                     </div>
-                                    <!-- Form Group (Auto Snapshot On)-->
-                                    <div class="custom-control custom-checkbox ml-2">
-                                        <input class="custom-control-input" id="inputAuto" type="checkbox" value="1">
-                                        <label class="custom-control-label" for="inputAuto">Auto Snapshot</label>
-                                    </div>
+
+                                </div>
+                                <!-- Form Group (Auto Snapshot On)-->
+                                <div class="custom-control custom-checkbox ml-2">
+                                    <input class="custom-control-input" id="inputAuto" type="checkbox" value="1">
+                                    <label class="custom-control-label" for="inputAuto">Auto Snapshot</label>
                                 </div>
                                 <!-- Form Group (Submit box)-->
                                 <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <a class="btn btn-primary" id="inputSubmitChange">Submit</a>
-                                    <a class="align-text-bottom isDisabled" hidden id="errorSubmitChange">Error updating options please contact the IT department</a>
+                                    <a class="btn btn-primary" id="inputSubmit">Submit</a>
+                                    <a class="align-text-bottom isDisabled" hidden id="errorSubmit">Error updating options please contact the IT department</a>
                                 </div>
                             </form>
                         </div>
