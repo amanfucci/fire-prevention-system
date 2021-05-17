@@ -49,39 +49,34 @@ CREATE TABLE utenti (
   cognome varchar(20) NOT NULL,
   telefono char(10) NOT NULL UNIQUE,
   email varchar(50) NOT NULL UNIQUE,
-  pw char(64) NOT NULL,
-  ruolo set('tecnico','amministratore','supervisore') DEFAULT NULL,
-  amministratore int UNSIGNED DEFAULT NULL,
-  FOREIGN KEY (amministratore) references utenti(utenteId)
+  pw char(128) NOT NULL,
+  ruolo set('tecnico','amministratore','supervisore') DEFAULT NULL
 );
 
 CREATE TABLE richieste (
   richiestaId int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  timestamp timestamp NOT NULL,
+  timestamp timestamp NOT NULL DEFAULT current_timestamp(),
   motivazione varchar(500) NOT NULL,
   urgenza set('1', '2', '3') NOT NULL DEFAULT '1',
   sensore bigint NOT NULL,
   supervisore int UNSIGNED NOT NULL,
+  tecnico int UNSIGNED NOT NULL,
   FOREIGN KEY (supervisore) references utenti(utenteId),
+  FOREIGN KEY (tecnico) references utenti(utenteId),
   FOREIGN KEY (sensore) references sensori(arduinoId)
 );
 
 CREATE TABLE interventi (
   interventoId int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  timestamp timestamp NOT NULL,
+  timestamp timestamp NOT NULL DEFAULT current_timestamp(),
   descrizione varchar(500) NOT NULL,
   risolutivo bool NOT NULL DEFAULT FALSE,
   tecnico int UNSIGNED NOT NULL,
-  FOREIGN KEY (tecnico) references utenti(utenteId)
+  richiesta int UNSIGNED NOT NULL,
+  FOREIGN KEY (tecnico) references utenti(utenteId),
+  FOREIGN KEY (richiesta) references richieste(richiestaId)
 );
 
-CREATE TABLE richieste_interventi (
-  richiesta int UNSIGNED NOT NULL,
-  intervento int UNSIGNED NOT NULL,
-  PRIMARY KEY (richiesta, intervento),
-  FOREIGN KEY (richiesta) references richieste(richiestaId),
-  FOREIGN KEY (intervento) references interventi(interventoId)
-);
 
 CREATE TABLE opzioni (
   chiave varchar(30) NOT NULL PRIMARY KEY,
@@ -161,7 +156,6 @@ CREATE DEFINER=root@localhost PROCEDURE set_snapshot_interval(IN par1 INT)
 BEGIN
 ALTER EVENT auto_snapshot ON SCHEDULE EVERY par1 MINUTE;
 UPDATE opzioni SET valore = par1 WHERE chiave = "snapshot_interval";
-SET GLOBAL EVENT_SCHEDULER = "ON";
 END$$
 DELIMITER ;
 
@@ -195,12 +189,12 @@ END$$
 DELIMITER ;
 
 /*DATA*/
-INSERT INTO opzioni (chiave, valore, descrizione)
-VALUES ('snapshot_interval', '5', "L'intervallo di tempo per la creazione di uno snapshot espresso in minuti");
+INSERT INTO opzioni (chiave, valore, descrizione) VALUES
+('snapshot_interval', '5', "L'intervallo di tempo per la creazione automatica di un nuovo snapshot (espresso in minuti)");
 
-INSERT INTO sensori VALUES
-(CONVERT(0x35202020ff09062d, UNSIGNED), 42.730058, 10.974754, '2021-04-05', '2021-05-01'),
-(CONVERT(0x35202020ff09062e, UNSIGNED), 42.730704, 10.975548, '2021-04-05', '2021-05-01'),
+INSERT INTO sensori (arduinoId, lng, lat, data_inst, data_rim) VALUES
+(CONVERT(0x35202020ff09062d, UNSIGNED), 10.974754, 42.730058 , '2021-04-05', '2021-05-01'),
+(CONVERT(0x35202020ff09062e, UNSIGNED), 10.975548, 42.730704, '2021-04-05', '2021-05-01'),
 (3828095009354745391, 10.968612474708962, 42.734079260382465, '2021-05-12', NULL),
 (3828095009354745392, 10.982033349643084, 42.727695954062625, '2021-05-12', NULL),
 (3828095009354745393, 10.979387978082178, 42.72692637568411, '2021-05-12', NULL),
@@ -1203,8 +1197,25 @@ INSERT INTO sensori (arduinoId, lat, lng, data_inst, data_rim) VALUES
 (3828095009354746389, 10.985520010299815, 42.722897169542755, '2021-05-12', NULL),
 (3828095009354746390, 10.990051659106852, 42.7263034935183, '2021-05-12', NULL);
 
+INSERT INTO utenti (utenteId, cf, nome, cognome, telefono, email, pw, ruolo) VALUES
+(2, 'MNFLSN02D09D612F', 'Alessandro', 'Manfucci', '3314559999', 'alessandro.manfucci@gmail.com', '2aded4ca19df32db57aa3ba30ef4f5fe812602a9957f6ecc9789bde80b3b1c5f907faf0c5684f825d086feb90b20c380c82f4ad6c02935ca6ab594c918b8ae6e', 'amministratore'),
+(4, 'GPMLKN86C31H992T', 'Giovanni', 'Rossi', '4567892345', 'giovannirossi@gmail.com', '123733f98b619664977a1e0c6c98d86eb13fe7babccbe0271259e37bafda6baccc09c2e3ded204935b975ca934c1c26e612c73c2beda42250474761d1bfb9323', 'tecnico'),
+(5, 'SCGQRR95C23B722F', 'Aldo', 'Rossi', '1234567890', 'aldorossi@gmail.com', '23eb5ba88d4ccbc36a8d6d379e43c2cbe23cf66826d74e8e975ce587b181553a5225b06a0927ef383ff4feb24c2870112d16013b7a9cc9b154908f67694c3bfd', 'supervisore'),
+(7, 'HVFNWT93S54D236Z', 'Giacomo', 'Rossi', '2345678901', 'giacomorossi@gmail.com', '5b4bdeac7e256967e75549ea9179babd6e324453ddd0460bfea1f1c68924f27a346b57ee45b77feb8e9a7cb9035a3157135552623c8532f5e58c52f7ec66c155', 'tecnico'),
+(8, 'KYCNRF89A46B232P', 'Mario', 'Rossi', '4567893456', 'mariorossi@gmail.com', '339c465ab12cf78a1836c37e1a2099fb18af59f12831acd8e1d7be9d8e04b4a4b3c4bee6ca527732b732b7acf2ed2fc7cb1aaeb1b9c9b5ca8ebb21d6ea200de5', NULL),
+(9, 'HHFCSP71S20F122H', 'Luca', 'Rossi', '4567890456', 'lucarossi@gmail.com', 'b35a0b0820e9694a7641246e7f0fe7b68314d8f4e8e5c29878db90d10ccf443681b3d13379a170ca8998730337f886675a493ce5812884f9270ccb4fc66aa750', NULL),
+(10, 'JFHRTL77H02C655K', 'Giovanni', 'Rossi', '4567890234', 'giovannirossigmail.com', '19b65b44fb977de6a71c8421dd554ccb2a6773d249a3dec2566e45ba0b8f4e1f2280413625dcf28f3f83371879e632a7b01134fdc2235f2c17ea519bfd83cd8c', 'tecnico');
+
+INSERT INTO richieste (richiestaId, timestamp, motivazione, urgenza, sensore, supervisore, tecnico) VALUES
+(3, '2021-05-16 07:52:38', 'Controllo periodico', '1', 3828095009354745390, 5, 4),
+(5, '2021-05-16 12:59:48', 'Controllo Periodico', '2', 3828095009354745391, 5, 7),
+(6, '2021-05-16 15:39:12', 'Controllo Periodico', '1', 3828095009354745392, 2, 4);
+
+INSERT INTO interventi (interventoId, timestamp, descrizione, risolutivo, tecnico, richiesta) VALUES
+(1, '2021-05-16 19:48:16', 'Il sensore non riporta malfunzionamenti', 1, 4, 3),
+(2, '2021-05-16 20:00:18', 'Prova', 1, 4, 6);
+
 INSERT INTO misurazioni (dataId, sensore, temperatura, umidita, co2, tvoc, updateId, timestamp) VALUES
 (1,CONVERT (0x35202020ff09062d, UNSIGNED), 25, 42, 555, 23, 169, '2021-04-05 15:16:08'),
 (2,CONVERT (0x35202020ff09062e, UNSIGNED), 25, 42, 555, 23, 169, '2021-04-05 15:16:08');
-
 ALTER TABLE misurazioni AUTO_INCREMENT = 3;

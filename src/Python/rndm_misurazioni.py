@@ -39,8 +39,9 @@ sql = "INSERT INTO misurazioni (sensore, temperatura, umidita, co2, tvoc, update
 sql += "VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
 # data ins.
-timestamp = d.datetime(2021, 5, 12, hour=1, minute=0, second=0)
-for y in range(0, 15):
+timestamp = d.datetime(2021, 5, 12, hour=0, minute=0, second=0)
+for y in range(0, 40):
+    np.random.seed();
     timestamp += d.timedelta(minutes=5)
     temperatura = np.random.choice(
         temperatura_set, n_nodes, p=temperatura_prob)
@@ -50,16 +51,17 @@ for y in range(0, 15):
     for x in range(0, n_nodes):
         rnd_ts = timestamp + (np.random.rand() * d.timedelta(seconds=90))
         val = (start_id+x, int(temperatura[x]), int(umidita[x]),
-               int(co2[x]), int(tvoc[x]), int(updateId_start + x), rnd_ts)
+               int(co2[x]), int(tvoc[x]), updateId_start, rnd_ts)
         # print(val)
         mycursor.execute(sql, val)
         mydb.commit()
-    max_ts = (timestamp + d.timedelta(seconds=90)).strftime("%Y-%m-%d %H:%M:%S")
-    temp = "CALL take_snapshot('" + max_ts +"', NULL, NULL);"
+    max_ts = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    temp = "CALL take_snapshot('" + max_ts + "', NULL, NULL);"
     print(temp)
     try:
-      mycursor = mydb.cursor()
-      mycursor.callproc("take_snapshot", [max_ts, 'NULL', 'NULL'])
-      mydb.commit()
+        mycursor = mydb.cursor()
+        mycursor.callproc("take_snapshot", [max_ts, 'NULL', 'NULL'])
+        mydb.commit()
     except mysql.connector.Error as e:
-      print(e)
+        print(e)
+    updateId_start = (updateId_start+1) % 65536

@@ -22,7 +22,8 @@ for x in points:
         location=[x["geometry"]["coordinates"][1],x["geometry"]["coordinates"][0]],
     ).add_to(map)
     start_id += 1
-    val = (start_id,x["geometry"]["coordinates"][0], x["geometry"]["coordinates"][1], '2021-05-12')
+    val = (start_id,x["geometry"]["coordinates"][1], x["geometry"]["coordinates"][0], '2021-05-12')
+    print (val);
     mycursor.execute(sql, val)
     mydb.commit()
 
