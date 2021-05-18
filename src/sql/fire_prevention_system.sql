@@ -71,9 +71,7 @@ CREATE TABLE interventi (
   timestamp timestamp NOT NULL DEFAULT current_timestamp(),
   descrizione varchar(500) NOT NULL,
   risolutivo bool NOT NULL DEFAULT FALSE,
-  tecnico int UNSIGNED NOT NULL,
   richiesta int UNSIGNED NOT NULL,
-  FOREIGN KEY (tecnico) references utenti(utenteId),
   FOREIGN KEY (richiesta) references richieste(richiestaId)
 );
 
