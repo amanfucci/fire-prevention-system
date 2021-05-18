@@ -9,8 +9,8 @@ $request = $_POST['request'];
 $descr = $_POST['descr'];
 $solved = $_POST['solved'];
 
-$sql = "INSERT INTO interventi (descrizione, risolutivo, tecnico, richiesta) VALUE
-('$descr', $solved,(SELECT utenteId from utenti where email like '" . $_SESSION['user'] . "'), $request)";
+$sql = "INSERT INTO interventi (descrizione, risolutivo, richiesta) VALUE
+('$descr', $solved, $request)";
 if ($conn->query($sql) === TRUE) {
     echo json_encode([true]);
 } else {
