@@ -1,0 +1,177 @@
+<!--
+		* MANFU - FPS
+		* Copyright 2021 MANFU
+		* Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
+		*/-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="WebApp per il controllo degli incendi nella pineta di Grosseto">
+	<meta name="author" content="MANFU">
+	<title>Home - FPS</title>
+	<link rel="icon" type="image/x-icon" href="img/pc_icon.png">
+
+	<!--Theme js/css-->
+	<script id="ga-gtag" type="text/javascript" async src="assets/theme/js/js.js"></script>
+	<link href="assets/theme/css/styles2.css" rel="stylesheet">
+	<link href="assets/theme/css/styles.css" rel="stylesheet">
+	<link href="assets/DataTables/DataTables-1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<link href="assets/daterangepicker/daterangepicker.css" rel="stylesheet">
+	<script src="assets/theme/js/all.min.js.download"></script>
+	<script src="assets/theme/js/feather.min.js.download"></script>
+	<link href="assets/theme/css/chart.css" rel="stylesheet">
+	<link href="assets/deck.gl/mapbox-gl.css" rel="stylesheet"/>
+	<!-- Bootstrap Icons -->
+	<link rel="stylesheet" href="assets/theme/css/bootstrap-icons.css">
+	<!--MANFU css -->
+	<link rel="stylesheet" href="css/manfu.css">
+
+
+</head>
+
+<body class="nav-fixed" data-new-gr-c-s-check-loaded="14.998.0" data-gr-ext-installed="" id="myBody">
+	<!--Topnav-->
+	<div id="topnav-container">
+	</div>
+
+	<div id="check_window" class="d-none d-md-block"></div>
+	<div id="layoutSidenav">
+
+		<!--Sidenav-->
+		<div id="sidenav-container">
+		</div>
+
+		<div id="layoutSidenav_content">
+			<!--Map-->
+			<main id="app" style="height: 100vh;">
+			</main>
+
+			<!--Fixed panel-->
+			<div class="panel-home-md">
+				<!--Snapshot card-->
+				<div class="card card-progress mt-3 card-collapsable" id="app-panel">
+					<a class="card-header" href="#" data-toggle="collapse" role="button" id="snap_btn_collapse">
+						<div id="app-panel-header">Select a Snapshot</div>
+						<div class="card-collapsable-arrow pl-2">
+							<i class="fas fa-chevron-down"></i>
+						</div>
+					</a>
+					<div class="collapse show" id="snap_collapse">
+						<div class="card-body" id="app-panel-body">
+							<p><b>Nodes:</b></p>
+							<p><b>Max Fire Index: </b>/5</p>
+							<p><b>Avg Fire Index: </b>/5</p>
+						</div>
+						<div class="card-footer text-body container-fluid" id="app-panel-footer">
+							Fire Index:
+							<div class="row mt-2" style="height: 5px">
+								<div class="col-2 bg-green">
+								</div>
+								<div class="col-2 bg-yellow">
+								</div>
+								<div class="col-2 bg-orange">
+								</div>
+								<div class="col-2 bg-red">
+								</div>
+								<div class="col-4 bg-purple">
+								</div>
+							</div>
+							<div class="row pt-2 text-center">
+								<div class="col-2">0
+								</div>
+								<div class="col-2">1
+								</div>
+								<div class="col-2">2
+								</div>
+								<div class="col-2">3
+								</div>
+								<div class="col-4">4 - 5
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--Node card-->
+				<div class="card card-progress mt-1 card-collapsable">
+					<a class="card-header" href="#" data-toggle="collapse" role="button" id="sens_btn_collapse">
+						<div id="sens-panel-header">Select a Node</div>
+						<div class="card-collapsable-arrow pl-2">
+							<i class="fas fa-chevron-down"></i>
+						</div>
+					</a>
+					<div class="collapse" id="sens_collapse">
+						<div class="card-body" id="sens-panel-body">
+							<p><b>Data Id: </b></p>
+							<p><b>Lat: </b> N</p>
+							<p><b>Lng: </b> E</p>
+							<p><b>Fire Index: </b>/5</p>
+							<p><b>Temperatura: </b> °C</p>
+							<p><b>Umidità: </b> %</p>
+							<p><b>CO2: </b> ppm</p>
+							<p><b>tVOC: </b> ppb</p>
+						</div>
+						<div class="card-footer text-body container-fluid text-center" id="sens-panel-footer">
+							0000-00-00 00:00:00
+						</div>
+					</div>
+				</div>
+
+				<!--Date picker card-->
+				<div class="card mt-1">
+					<div class="card-body p-1">
+						<div class='input-group input-group-solid bg-white'>
+							<button type='button' class='btn btn-white pr-1' id='date_picker' data-toggle="tooltip"
+								data-placement="left" data-trigger="manual" data-original-title="No snapshots here">
+								<i class='bi bi-calendar2-fill icon-blue-custom' aria-hidden='true'></i>&ensp;
+								<span class='text'></span>
+							</button>
+							<button class="btn btn-light btn-icon p-0 m-0" type="button" id="bw_snapshot">
+								<i class="bi bi-chevron-left icon-h5" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-light btn-icon p-0 m-0" type="button" id="fw_snapshot">
+								<i class="bi bi-chevron-right icon-h5" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		
+		<!--Footer-->
+		</div>
+		<div id="footer-container" class="fot-home"></div>
+
+	</div>
+
+	</div>
+
+	<!--JQuery-->
+	<script src="assets/jquery/jquery-3.5.1.min.js"></script>
+	<script src="assets/jquery/jquery.cookie.js"></script>
+	<!--Date Picker js-->
+	<script src="assets/daterangepicker/moment-with-locales.min.js"></script>
+	<script src="assets/daterangepicker/daterangepicker.min.js"></script>
+	<!--MANFU Hb-->
+	<script src="assets/handlebars/handlebars.min-v4.7.6.js"></script>
+	<script src="assets/handlebars/page_layout.js"></script>
+	<!--Theme js-->
+	<script src="assets/theme/js/bootstrap.bundle.min.js"></script>
+	<script src="assets/theme/js/scripts.js"></script>
+	<!--deck.gl-->
+	<script src="assets/deck.gl/core.dist.min.js"></script>
+	<script src="assets/deck.gl/carto.dist.min.js"></script>
+	<script src="assets/deck.gl/mapbox-gl.js"></script>
+	<!--MANFU js-->
+	<script src="js/sidenav-inverter-fun-kbm.js"></script>
+	<script src="js/authenticate-manfu.js"></script>
+	<script src="js/map-manfu.js"></script>
+
+</body>
+
+</html>

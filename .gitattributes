@@ -7,3 +7,4 @@ src/web_app/assets/deck.gl/** -linguist-detectable
 src/web_app/assets/handlebars/** -linguist-detectable
 src/web_app/assets/jquery/** -linguist-detectable
 src/web_app/assets/theme/** -linguist-detectable
+src/web_app_release/** -linguist-detectable
