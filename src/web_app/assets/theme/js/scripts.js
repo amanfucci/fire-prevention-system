@@ -18,7 +18,7 @@
 	$(document).ready(function () {
 		// Add active state to sidbar nav links
 		var path = window.location.href ; // because the 'href' property of the DOM element is the absolute path
-		if(path.search(/\./) == -1)
+		if(path.search(".html") == -1 && path.search(".php") == -1)
 			path += 'index.html'
 		//console.log(path);
 		$("#layoutSidenav_nav .sidenav a.nav-link").each(function () {

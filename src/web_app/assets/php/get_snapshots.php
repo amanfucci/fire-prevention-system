@@ -12,7 +12,7 @@ $result = $conn->query($sql);
 if (!empty($result) && $result->num_rows > 0) {
 	while ($row = $result->fetch_assoc()) {
 		foreach ($row as $key => $value) {
-			$row[$key] = ctype_digit($value) ? intval($value) : $value;
+			$row[$key] = is_null($value) || $value == 'NULL' ? 'Auto' : $value;
 		}
 		array_push($data, $row);
 	}

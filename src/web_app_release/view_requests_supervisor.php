@@ -1,4 +1,4 @@
-<?
+<?php
 include "assets/php/conn_lib.php";
 ?>
 <!--
