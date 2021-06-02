@@ -3,7 +3,7 @@
         * Copyright 2021 MANFU
         * Licensed under SEE_LICENSE (https://gitlab.com/alessandro.manfucci/forest-fire-prevention/-/blob/7b5d9a155ee6f789adca008263d704de8adc879d/LICENSE)
         */
-col = [[0, 172, 105], [244, 161, 0], [247, 100, 0], [232, 21, 0], [227, 0, 89], [105, 0, 99]];
+col = [[0, 172, 105], [0, 172, 105], [244, 161, 0], [247, 100, 0], [232, 21, 0], [227, 0, 89], [105, 0, 99]];
 var my_map = undefined;
 var min, max, sel, ind, snapshots;
 $.ajaxSetup({ cache: false });
@@ -123,9 +123,7 @@ function set_map(data) {
             opacity: 0.3,
             intensity: 1,
             getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
-            getWeight: d => 1.9 ** d.fire_index,
-            threshold: 0.01,
-            maxWeight: 1.9**5,
+            getWeight: d => d.fire_index+1,
             radiusPixels: 30,
             colorRange: col,
             aggregation: 'MEAN'
