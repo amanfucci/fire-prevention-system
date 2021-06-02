@@ -2,17 +2,17 @@ import threading
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 # --- Settings
 TIME_MOLT = 1 / 1000  # Speed up simulation, 1/TIME_MOLT faster
 FRAME_SIZE = 240 * 8  # bit
 BANDWIDTH = 5000  # bps
 TOA = 0.384 * TIME_MOLT  # seconds
-MIN_STAZIONI = 2
-MAX_STAZIONI = 7
-RANGE_STAZIONI_N = MAX_STAZIONI - MIN_STAZIONI + 1
-ITERATIONS = 5
+MIN_NODES = 2
+MAX_NODES = 7
+RANGE_NODES = MAX_NODES - MIN_NODES + 1
+ITERATIONS = 10
 TASK_TIME = 600 * TIME_MOLT  # seconds
+N_GRAPHS = 4
 # ---
 
 
@@ -40,38 +40,35 @@ def task(my_s_list, name):  # Send frames task
         # print("\n%s: Start-%s End-%s\n" % (name, now, now + toa), end='')
         my_s_list.add_frame([now, now + TOA])
         time.sleep(TOA)
-        time.sleep(TOA * 99 * TIME_MOLT)  # Follow duty cycle 1%
+        time.sleep(TOA * 99)  # Follow duty cycle 1%
 
 
 if __name__ == '__main__':
-    plt_var = [{"x": {"val": [], "name": ''}, "y": {"val": [], "name": ''}} for x in range(3)]
+    plt_var = [{"x": {"val": [], "name": ''}, "y": {"val": [], "name": ''}} for x in range(N_GRAPHS)]
     plt_first_round = True
-    plt_x = [[] for x in range(10)]
-    name_x = []
-    plt_y = [[] for x in range(10)]
-    name_y = []
 
     # Show simulation status
     print("\r", "0.00%, -",
-          "%.2f" % (TASK_TIME * ITERATIONS * RANGE_STAZIONI_N),
+          "%.2f" % (TASK_TIME * ITERATIONS * RANGE_NODES),
           " [", "".join(['-' for z in range(ITERATIONS)]), "]",
           end='', sep='')
 
-    for i in range(RANGE_STAZIONI_N):
+    for i in range(RANGE_NODES):
 
-        n_stazioni = i + MIN_STAZIONI
+        n_nodes = i + MIN_NODES
         stats = {'success_rate': [], 'sim_time': [], 'exec_time': [],
                  'avg_frames_toa': [], 'avg_bps': [], 'avg_th': []}
+        program_start = time.time()
 
         for j in range(ITERATIONS):
             s_list = SharedList()
-            stazioni = []
-            for k in range(n_stazioni):
+            nodes = []
+            for k in range(n_nodes):
                 # Start new thread
-                stazioni.append(threading.Thread(target=task, args=(s_list, "Stazione-" + str(j))))
-                stazioni[-1].start()
+                nodes.append(threading.Thread(target=task, args=(s_list, "Node-" + str(k))))
+                nodes[-1].start()
 
-            for thread in stazioni:
+            for thread in nodes:
                 thread.join()
 
             result = []
@@ -81,7 +78,7 @@ if __name__ == '__main__':
                 temp.remove(x)
                 for y in temp:
                     #
-                    #  [0]       x[1]               x[0]       x[1]        x[0]       x[1]
+                    # x[0]       x[1]               x[0]       x[1]        x[0]       x[1]
                     #   |---.------|                  |------.---|           |----------|
                     #       .                                .               .          .
                     #       .                                .               .          .
@@ -111,39 +108,52 @@ if __name__ == '__main__':
             stats['avg_th'].append(avg_th)
 
             # Show simulation status
-            print("\r", "%.2f" % ((i+((j+1)/ITERATIONS)) / RANGE_STAZIONI_N * 100), "%, -",
-                  "%.2f" % (TASK_TIME * ITERATIONS * (RANGE_STAZIONI_N - (i+(j+1)/ITERATIONS))),
+            print("\r", "%.2f" % ((i+((j+1)/ITERATIONS)) / RANGE_NODES * 100), "%, -",
+                  "%.2f" % (TASK_TIME * ITERATIONS * (RANGE_NODES - (i + (j + 1) / ITERATIONS))),
                   " [", "".join(['=' for z in range(j+1)]),
                   "".join(['-' for z in range(ITERATIONS-1-j)]), "]",
                   end='', sep='')
 
+        program_time = time.time() - program_start
+        overhead_ratio = program_time / np.sum(stats['exec_time'])
         # Show stats
-        print("\nExec. Time: ", "%.3f" % np.sum(stats['exec_time']),
-              "\nStazioni: ", n_stazioni,
-              "\nAvg. Frames in ToA: ", "%.3f" % np.average(stats['avg_frames_toa']),
-              "\nAvg. bps: ", "%.3f" % np.average(stats['avg_bps']),
-              "\nSuccess Rate [%]: ", "%.3f\n" % np.average(stats['success_rate']))
+        print("\nn_nodes: ", n_nodes,
+              "\nexec_time: ", "%.3f" % np.sum(stats['exec_time']),
+              "\noverhead_ratio: " "%.3f" % overhead_ratio,
+              "\navg_frames_toa: ", "%.3f" % np.average(stats['avg_frames_toa']),
+              "\navg_bps: ", "%.3f" % np.average(stats['avg_bps']),
+              "\nsuccess_rate: ", "%.3f\n" % np.average(stats['success_rate']), )
 
         # Add to Graph
         if plt_first_round:  # Labels
-            plt_var[0]['x']['name'] = 'n_stazioni'
+            plt_var[0]['x']['name'] = 'n_nodes'
             plt_var[0]['y']['name'] = 'success_rate'
             plt_var[1]['x']['name'] = 'avg_frames_toa'
             plt_var[1]['y']['name'] = 'avg_th'
-            plt_var[2]['x']['name'] = 'n_stazioni'
+            plt_var[2]['x']['name'] = 'n_nodes'
             plt_var[2]['y']['name'] = 'avg_frames_toa'
+            plt_var[3]['x']['name'] = 'n_nodes'
+            plt_var[3]['y']['name'] = 'avg_bps'
 
-        plt_var[0]['x']['val'].append(n_stazioni)  # Values
+        plt_var[0]['x']['val'].append(n_nodes)  # Values
         plt_var[0]['y']['val'].append(np.average(stats['success_rate']))
         plt_var[1]['x']['val'].append(np.average(stats['avg_frames_toa']))
         plt_var[1]['y']['val'].append(np.average(stats['avg_th']))
-        plt_var[2]['x']['val'].append(n_stazioni)
+        plt_var[2]['x']['val'].append(n_nodes)
         plt_var[2]['y']['val'].append(np.average(stats['avg_frames_toa']))
+        plt_var[3]['x']['val'].append(n_nodes)
+        plt_var[3]['y']['val'].append(np.average(stats['avg_bps']))
 
     # Plot
+
     fig = plt.figure(figsize=(160, 90))
+
     for i in range(len(plt_var)):
         plt.subplot(2, 2, i+1)
+        plt.title('TIME_MOLT: ' + str(TIME_MOLT) +
+                  ', ITERATIONS: ' + str(ITERATIONS) +
+                  ', TASK_TIME: ' + str(TASK_TIME/TIME_MOLT))
+
         plt.grid(True)
         plt.scatter(x=plt_var[i]['x']['val'], y=plt_var[i]['y']['val'], marker='o', c='blue', s=20)
         plt.xlabel(plt_var[i]['x']['name'])
