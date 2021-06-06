@@ -125,6 +125,7 @@ function set_map(data) {
             getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
             getWeight: d => d.fire_index+1,
             radiusPixels: 30,
+            colorDomain: [0.01, 6],
             colorRange: col,
             aggregation: 'MEAN'
         }),
