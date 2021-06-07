@@ -1,6 +1,9 @@
 <?php
 include "assets/php/conn_lib.php";
-if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
+if (
+    !isset($_SESSION['user']) || !isset($_SESSION['user_type']) ||
+    strlen($_SESSION['user']) < 3 || strlen($_SESSION['user_type']) < 3
+)
     header("location: error_401.html");
 if ($_SESSION['user_type'] != 'amministratore')
     header("location: error_401.html");

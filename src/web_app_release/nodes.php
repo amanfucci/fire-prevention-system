@@ -1,6 +1,9 @@
 <?php
-session_start();
-if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
+include "assets/php/conn_lib.php";
+if (
+	!isset($_SESSION['user']) || !isset($_SESSION['user_type']) ||
+	empty($_SESSION['user']) || empty($_SESSION['user_type'])
+	)
 	header("location: error_401.html");
 ?>
 <!--

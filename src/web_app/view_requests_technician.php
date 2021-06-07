@@ -66,7 +66,10 @@
 
                     <?php
                     include "assets/php/conn_lib.php";
-                    if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
+                    if (
+                        !isset($_SESSION['user']) || !isset($_SESSION['user_type']) ||
+                        strlen($_SESSION['user']) < 3 || strlen($_SESSION['user_type']) < 3
+                    )
                         header("location: error_401.html");
                     if ($_SESSION['user_type'] != 'tecnico')
                         header("location: error_401.html");
@@ -101,7 +104,7 @@
                             FROM richieste as r
                             inner join interventi as i on richiesta = richiestaId
                             where r.richiestaId =" . $row[0]['richiestaId'] .
-                            " order by i.timestamp desc";
+                                " order by i.timestamp desc";
                             $result[1] = $conn->query($sql[1]);
                             if (!empty($result[1]) && $result[1]->num_rows > 0) {
                                 $first = true;

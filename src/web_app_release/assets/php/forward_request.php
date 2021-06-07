@@ -1,6 +1,9 @@
 <?php
 include "conn_lib.php";
-if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
+if (
+    !isset($_SESSION['user']) || !isset($_SESSION['user_type']) ||
+    strlen($_SESSION['user']) < 3 || strlen($_SESSION['user_type']) < 3
+)
     header("location: ../../error_401.html");
 if ($_SESSION['user_type'] == 'utente' || $_SESSION['user_type'] == 'tecnico')
     header("location: error_401.html");
@@ -28,13 +31,12 @@ if (!empty($result) && $result->num_rows > 0) {
         //Insert new request
         $sql = "INSERT INTO richieste (motivazione, urgenza, sensore, supervisore, tecnico) VALUE
         ('$reason', '$priority', $node, $supervisoreId, $tecId);";
-        
+
         if ($conn->query($sql) === TRUE) {
             echo json_encode([true, $sql]);
         } else {
             echo json_encode([false, $sql, $conn->error]);
         }
-
     } else {
         echo json_encode([false, $sql, $conn->error]);
     }

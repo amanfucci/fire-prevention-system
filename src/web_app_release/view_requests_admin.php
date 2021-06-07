@@ -66,8 +66,11 @@ include "assets/php/conn_lib.php";
                 </header>
                 <!-- Main page content-->
                 <div class="container mt-n10">
-		<?
-                    if (!isset($_SESSION['user']) || !isset($_SESSION['user_type']))
+                    <?
+                    if (
+                        !isset($_SESSION['user']) || !isset($_SESSION['user_type']) ||
+                        strlen($_SESSION['user']) < 3 || strlen($_SESSION['user_type']) < 3
+                    )
                         header("location: error_401.html");
                     if ($_SESSION['user_type'] != 'amministratore')
                         header("location: error_401.html");
@@ -75,8 +78,8 @@ include "assets/php/conn_lib.php";
                     $sql = [];
                     $result = [];
                     $row = [];
-                    $sql[0] = 
-                    "SELECT tec.nome as tec_nome, tec.cognome as tec_cognome,
+                    $sql[0] =
+                        "SELECT tec.nome as tec_nome, tec.cognome as tec_cognome,
                     tec.utenteId as tec_utenteId, sup.nome as sup_nome,
                     sup.cognome as sup_cognome, sup.utenteId as sup_utenteId, richieste.*
                     FROM richieste inner join utenti as sup on supervisore = sup.utenteId
@@ -104,13 +107,13 @@ include "assets/php/conn_lib.php";
                             //Print card header
                             $card['header'] .= $row[0]['timestamp'] . ' (Id: ' . $row[0]['richiestaId'] . '), ' . $p2text[$row[0]['urgenza']] . ' Priority';
                             $card['footer'] .= 'Assigned to ' . $row[0]['tec_nome'] . ' ' . $row[0]['tec_cognome'] . " (Id: " . $row[0]['tec_utenteId'] . ")"
-                                . ' By ' . $row[0]['sup_nome'] . ' ' . $row[0]['sup_cognome'] . " (Id: " . $row[0]['sup_utenteId'] . ") " . 'for the reason: \'<i>' . $row[0]['motivazione'] . '</i>\'' . 
+                                . ' By ' . $row[0]['sup_nome'] . ' ' . $row[0]['sup_cognome'] . " (Id: " . $row[0]['sup_utenteId'] . ") " . 'for the reason: \'<i>' . $row[0]['motivazione'] . '</i>\'' .
                                 '<p>Node: ' . $row[0]['sensore']  . '</p>';
                             $sql[1] = "SELECT i.interventoId as Id, i.timestamp as timestamp, i.descrizione as Description, i.risolutivo as Solved
                             FROM richieste as r
                             inner join interventi as i on richiesta = richiestaId
                             where r.richiestaId = " . $row[0]['richiestaId'] .
-                            " order by i.timestamp desc";
+                                " order by i.timestamp desc";
                             $result[1] = $conn->query($sql[1]);
                             if (!empty($result[1]) && $result[1]->num_rows > 0) {
                                 $first = true;

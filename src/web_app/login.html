@@ -88,6 +88,15 @@
   <script src="assets/theme/js/scripts.js"></script>
   <!--MANFU js-->
   <script src="js/authenticate-manfu.js"></script>
+  <script>
+    document.getElementById("inputPassword").addEventListener("keyup", function (event) {
+      // Number 13 is the "Enter" key on the keyboard
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        $("#inputLogin").click();
+      }
+    });
+  </script>
 </body>
 
 </html>
