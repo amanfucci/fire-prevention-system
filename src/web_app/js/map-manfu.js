@@ -163,7 +163,7 @@ function set_map(data) {
         my_map = new deck.DeckGL({
             container: 'app',
             mapStyle: deck.carto.BASEMAP.POSITRON,
-            mapboxApiAccessToken: 'pk.eyJ1IjoibWFuZnUiLCJhIjoiY2tvazlxcmF0MDI0bzJ2cWxuOGV5dWU3dSJ9.AW6J2eFyh_79OQ6jl7LqFA',
+            mapboxApiAccessToken: 'pk.eyJ1IjoibWFuZnUiLCJhIjoiY2twbXMzM2JuMGw4MjJwcXFrN241Mmg1eCJ9.X35rBCowC_t9qiGQonSlkQ',
             initialViewState: {
                 latitude: 42.72437670342,
                 longitude: 10.98787813097,
