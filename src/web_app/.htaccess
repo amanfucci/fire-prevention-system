@@ -1,1 +1,3 @@
+Options -Indexes
 ErrorDocument 404 /forest-fire-prevention/src/web_app/error_404.html
+ErrorDocument 403 /forest-fire-prevention/src/web_app/error_404.html
