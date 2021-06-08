@@ -7,6 +7,7 @@ col = [[0, 172, 105], [0, 172, 105], [244, 161, 0], [247, 100, 0], [232, 21, 0],
 var my_map = undefined;
 var min, max, sel, ind, snapshots;
 $.ajaxSetup({ cache: false });
+var isMobile = navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i);
 set_map([]);
 //Get range
 $.ajax({
@@ -99,7 +100,7 @@ function get_snapshots(s) {
     }).done(function (data) {
         //On request received
         snapshots = JSON.parse(data);
-        console.log(snapshots);
+        //console.log(snapshots);
         if (snapshots.length > 0) {
             ind = 0;
             get_snapshot_data(snapshots[ind]['timestamp']);
@@ -119,7 +120,7 @@ function set_map(data) {
         new deck.HeatmapLayer({
             id: 'heat-map',
             data: data,
-            opacity: 0.3,
+            opacity: isMobile ? 0 : 0.3,
             intensity: 1,
             getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
             getWeight: d => d.fire_index+1,
@@ -156,7 +157,18 @@ function set_map(data) {
                 $('#sens-panel-footer').html(temp);
             }
 
-        })
+        }),
+        new deck.HexagonLayer({
+            id: 'hexagon-layer',
+            data: data,
+            opacity: isMobile ? 0.3 : 0,
+            getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
+            getColorWeight: d => d.fire_index+1,
+            radius: 100,
+            colorDomain: [0.01, 6],
+            colorRange: col,
+            colorAggregation: 'MAX'
+          })
     ];
     if (my_map === undefined) {
         my_map = new deck.DeckGL({

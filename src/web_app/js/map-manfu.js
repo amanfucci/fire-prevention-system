@@ -7,6 +7,7 @@ col = [[0, 172, 105], [0, 172, 105], [244, 161, 0], [247, 100, 0], [232, 21, 0],
 var my_map = undefined;
 var min, max, sel, ind, snapshots;
 $.ajaxSetup({ cache: false });
+var isMobile = navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i);
 set_map([]);
 //Get range
 $.ajax({
@@ -16,11 +17,11 @@ $.ajax({
     //On request received
     data = JSON.parse(data);
     //console.log(data);
-    min = moment(new Date(data['min'])).startOf('hour');
-    max = sel = moment(new Date(data['max'])).startOf('hour');
+    min = moment(data['min'], "YYYY-MM-DD HH:mm:ss").startOf('hour');
+    max = sel = moment(data['max'], "YYYY-MM-DD HH:mm:ss").startOf('hour');
 
-    if (moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss").isValid())
-        sel = moment($.cookie('selected_fps'), "yyyy-MM-DD HH:mm:ss");
+    if (moment($.cookie('selected_fps'), "YYYY-MM-DD HH:mm:ss").isValid())
+        sel = moment($.cookie('selected_fps'), "YYYY-MM-DD HH:mm:ss");
 
     $('#date_picker').daterangepicker({
         opens: 'right',
@@ -38,12 +39,12 @@ $.ajax({
         parentEl: '#date_picker'
     }, (s, e) => {
         sel = s;
-        //console.log("Date picked: " + sel.format("yyyy-MM-DD HH:mm:ss"));
-        $.cookie('selected_fps', sel.startOf('hour').format("yyyy-MM-DD HH:mm:ss"), { path: '/' });
+        //console.log("Date picked: " + sel.format("YYYY-MM-DD HH:mm:ss"));
+        $.cookie('selected_fps', sel.startOf('hour').format("YYYY-MM-DD HH:mm:ss"), { path: '/' });
         get_snapshots(sel);
-        $('#date_picker span').html(sel.format('yyyy-MM-DD HH:mm'));
+        $('#date_picker span').html(sel.format('YYYY-MM-DD HH:mm'));
     });
-    $('#date_picker span').html(sel.format('yyyy-MM-DD HH:mm'));
+    $('#date_picker span').html(sel.format('YYYY-MM-DD HH:mm'));
     get_snapshots(sel);
 }).fail(function (data) {
     alert("01, Error fetching range");
@@ -90,13 +91,12 @@ $(window).on('load', function () {
 //----
 function get_snapshots(s) {
     //Get snapshots within range
-    //console.log(s.format("yyyy-MM-DD HH:mm:ss"));
+    //console.log(s.format("YYYY-MM-DD HH:mm:ss"));
     $.ajax({
         url: "assets/php/get_snapshot.php",
         type: "post",
         contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-        data: "date=" + s.format("yyyy-MM-DD HH:mm:ss")
-
+        data: "date=" + s.format("YYYY-MM-DD HH:mm:ss")
     }).done(function (data) {
         //On request received
         snapshots = JSON.parse(data);
@@ -120,7 +120,7 @@ function set_map(data) {
         new deck.HeatmapLayer({
             id: 'heat-map',
             data: data,
-            opacity: 0.3,
+            opacity: isMobile ? 0 : 0.3,
             intensity: 1,
             getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
             getWeight: d => d.fire_index+1,
@@ -157,6 +157,17 @@ function set_map(data) {
                 $('#sens-panel-footer').html(temp);
             }
 
+        }),
+        new deck.HexagonLayer({
+            id: 'hexagon-layer',
+            data: data,
+            opacity: isMobile ? 0.3 : 0,
+            getPosition: d => [parseFloat(d.lat), parseFloat(d.lng)],
+            getColorWeight: d => d.fire_index+1,
+            radius: 100,
+            colorDomain: [0.01, 6],
+            colorRange: col,
+            colorAggregation: 'MAX'
         })
     ];
     if (my_map === undefined) {
