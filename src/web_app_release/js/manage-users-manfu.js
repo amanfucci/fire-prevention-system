@@ -82,7 +82,7 @@
                 type: "post",
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                data: "&first_name=" + first_name + "&last_name=" + last_name +
+                data: "first_name=" + first_name + "&last_name=" + last_name +
                     "&email=" + email + "&cf=" + cf + "&phone="
                     + phone + "&user_type=" + user_type + "&user_id=" + user_id
                     + "&pw=" + pw
@@ -123,7 +123,7 @@
                 type: "post",
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                data: "&first_name=" + first_name + "&last_name=" + last_name +
+                data: "first_name=" + first_name + "&last_name=" + last_name +
                     "&email=" + email + "&cf=" + cf + "&phone=" + "&pw=" + pw
                     + phone + "&user_type=" + user_type
             }).done(function (data) {

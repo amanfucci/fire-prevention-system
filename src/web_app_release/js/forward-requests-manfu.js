@@ -74,7 +74,7 @@
                 type: "post",
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                data: "&reason=" + reason + "&priority=" + priority + "&node=" + node
+                data: "reason=" + reason + "&priority=" + priority + "&node=" + node
             }).done(function (data) {
                 //On request received
                 data = JSON.parse(data);

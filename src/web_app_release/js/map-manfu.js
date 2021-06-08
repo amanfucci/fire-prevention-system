@@ -245,7 +245,7 @@ function get_snapshot_data(snapshot) {
         url: "assets/php/get_snapshot_data.php",
         type: "post",
         contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-        data: "&snapshot='" + snapshot + "'"
+        data: "snapshot='" + snapshot + "'"
 
     }).done(function (data) {
         //On request received

@@ -16,7 +16,7 @@
 			type: "post",
 			async: true,
 			contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-			data: "&email=" + email + "&pw=" + pw
+			data: "email=" + email + "&pw=" + pw
 		}).done(function (data) {
 			//On request received
 			data = JSON.parse(data);
@@ -50,7 +50,7 @@ function logOut(redirect) {
 		type: "post",
 		async: true,
 		contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-		data: "&email=.&pw=."
+		data: "email=.&pw=."
 	}).done(function (data) {
 		//On request received
 		data = JSON.parse(data);

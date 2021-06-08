@@ -74,7 +74,7 @@
                 type: "post",
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                data: "&descr=" + descr + "&solved=" + solved + "&request=" + request
+                data: "descr=" + descr + "&solved=" + solved + "&request=" + request
             }).done(function (data) {
                 //On request received
                 data = JSON.parse(data);

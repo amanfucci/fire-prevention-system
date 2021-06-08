@@ -43,11 +43,11 @@
                 type: "post",
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                data: "&sn=" + sn + "&auto=" + auto 
+                data: "sn=" + sn + "&auto=" + auto 
             }).done(function (data) {
                 
                 data = JSON.parse(data);
-                //console.log(data);
+                console.log(data);
                 if (data[0]) {
                     $(window).attr("location", "manage_options.php")
                 }

@@ -95,7 +95,7 @@ function get_snapshots(s) {
         url: "assets/php/get_snapshot.php",
         type: "post",
         contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-        data: "&date='" + s.format("yyyy-MM-DD HH:mm:ss") + "'"
+        data: "date=" + s.format("yyyy-MM-DD HH:mm:ss")
 
     }).done(function (data) {
         //On request received
@@ -246,7 +246,7 @@ function get_snapshot_data(snapshot) {
         url: "assets/php/get_snapshot_data.php",
         type: "post",
         contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-        data: "&snapshot='" + snapshot + "'"
+        data: "snapshot='" + snapshot + "'"
 
     }).done(function (data) {
         //On request received

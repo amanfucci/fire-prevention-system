@@ -43,7 +43,7 @@
                 type: "post",
                 async: true,
                 contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-                data: "&sn=" + sn + "&auto=" + auto 
+                data: "sn=" + sn + "&auto=" + auto 
             }).done(function (data) {
                 
                 data = JSON.parse(data);

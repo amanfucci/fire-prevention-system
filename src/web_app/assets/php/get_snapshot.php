@@ -4,7 +4,7 @@ include "conn_lib.php";
 $date = $_POST['date'];
 
 $sql = "SELECT timestamp from snapshot
-where timestamp between $date and TIMESTAMPADD(HOUR,1,$date);";
+where timestamp between '$date' and TIMESTAMPADD(HOUR,1,'$date');";
 
 $data = [];
 

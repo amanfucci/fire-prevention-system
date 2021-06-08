@@ -74,7 +74,7 @@ $("#inputSubmit").click(function () {
             type: "post",
             async: true,
             contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-            data: "&title=" + title + "&descr=" + descr
+            data: "title=" + title + "&descr=" + descr
         }).done(function (data) {
             //On request received
             data = JSON.parse(data);
