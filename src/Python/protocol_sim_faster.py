@@ -3,15 +3,15 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 # --- Settings
-TIME_MOLT = 1 / 1000  # Speed up simulation, 1/TIME_MOLT faster
+TIME_MOLT = 1 / 10000  # Speed up simulation, 1/TIME_MOLT faster
 FRAME_SIZE = 240 * 8  # bit
 BANDWIDTH = 5000  # bps
 TOA = 0.384 * TIME_MOLT  # seconds
 MIN_NODES = 2
 MAX_NODES = 10
 RANGE_NODES = MAX_NODES - MIN_NODES + 1
-ITERATIONS = 5
-TASK_TIME = 600 * TIME_MOLT  # seconds
+ITERATIONS = 30
+TASK_TIME = 3600 * TIME_MOLT  # seconds
 N_GRAPHS = 4
 # ---
 
@@ -26,11 +26,14 @@ class SharedList(object):
     def incr_curr(self):
         self.lock.acquire()
         self.curr += 1
-        self.res.append(False if self.curr == 1 else True)
+        self.res.append(self.curr != 1)
+        tmp = len(self.res)-1
         self.lock.release()
+        return tmp
 
-    def decr_curr(self):
+    def decr_curr(self, tmp):
         self.lock.acquire()
+        self.res[tmp] = self.res[tmp] or self.curr != 1
         self.curr -= 1
         self.lock.release()
 
@@ -41,9 +44,9 @@ def task(my_s_list, name):  # Send frames task
     time.sleep(np.random.uniform(0 * TIME_MOLT, 20 * TIME_MOLT))
 
     while time.time() < end:
-        my_s_list.incr_curr()
+        tmp = my_s_list.incr_curr()
         time.sleep(TOA)
-        my_s_list.decr_curr()
+        my_s_list.decr_curr(tmp)
         time.sleep(TOA * 99)  # Follow duty cycle 1%
 
 
